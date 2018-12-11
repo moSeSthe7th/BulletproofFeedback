@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 098e531f814d93e479ea96faa7b903df, type: 3}
+  m_Name: BallTex10
+  m_EditorClassIdentifier: 
+  ballName: Ball 10
+  cost: 500
+  isOwned: 0
+  texture: {fileID: 2800000, guid: bfd6c840f03032548836f7e17a10a692, type: 3}
