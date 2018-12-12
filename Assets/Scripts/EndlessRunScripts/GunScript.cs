@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour
 {  
-    public GameObject player;
-
     private int bulletPos;
 
     private float offset;
@@ -34,8 +32,6 @@ public class GunScript : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-
         isShooting = false;
         blockNumb = 0;
         //shootInterval = 1f;
@@ -94,7 +90,7 @@ public class GunScript : MonoBehaviour
 
                 if(blockNumb < GameConst.instance.blockNumber)
                 {
-                    bulletOnTheWay(bulletPosition, PlatformTurnScript.instance.BulletRot[bulletPos], (totBulletSended != 0) ? -1 * spd * Player.instance.speed.z : -1 * spd * PlayerAccelerator.GetPlayerNormalSpeed());
+                    bulletOnTheWay(bulletPosition, PlatformTurnScript.instance.BulletRot[bulletPos], (totBulletSended != 0) ? -1 * spd * Player.instance.speed.z : -1 * spd * PlayerAccelerator.GetPlayerNormalSpeed(Player.instance.initialSpeed));
                     totBulletSended += 1;
                     blockNumb += 1;
                 }

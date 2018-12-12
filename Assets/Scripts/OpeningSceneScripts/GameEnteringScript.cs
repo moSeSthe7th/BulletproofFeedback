@@ -8,6 +8,13 @@ public class GameEnteringScript : MonoBehaviour {
     
 	void Start (){
 
+		DataScript.isGameModeEndless = 0;
+
+		if (!PlayerPrefs.HasKey("PlayerLevel"))
+		{
+			PlayerPrefs.SetInt("PlayerLevel", 1);
+		}
+
         if(PlayerPrefs.HasKey("DidAdsPurchased")){
 
             DataScript.isAdsPurchased = (PlayerPrefs.GetInt("DidAdsPurchased") == 0) ? false : (PlayerPrefs.GetInt("DidAdsPurchased") == 1) ? true : false;

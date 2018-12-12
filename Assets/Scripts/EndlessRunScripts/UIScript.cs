@@ -21,7 +21,7 @@ public class UIScript : MonoBehaviour
 
 	public GameObject gameOverPanel;
 
-    
+    public GameObject NextLevelPanel;
 
     public Button secondChance;
 
@@ -57,6 +57,7 @@ public class UIScript : MonoBehaviour
         countDown.gameObject.SetActive(false);
         skip.gameObject.SetActive(false);
         skipButton.gameObject.SetActive(false);
+        NextLevelPanel.SetActive(false);
 
         audioSource = GetComponent<AudioSource>();
         skipPressed = false;
@@ -159,6 +160,11 @@ public class UIScript : MonoBehaviour
 
     public void SkipPressed(){
         skipPressed = true;
+    }
+
+    public void NextLevel()
+    {
+        NextLevelPanel.SetActive(true);
     }
 
     public void GameOver()

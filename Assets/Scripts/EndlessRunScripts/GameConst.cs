@@ -12,6 +12,7 @@ public class GameConst : MonoBehaviour
     public bool isGameOn;
     public bool isLevel;
     public bool isReverseLevel;
+    public int gameMode; // 0 for levelbased mode, 1 for endless mode
 
     public static int Level;
 
@@ -19,6 +20,7 @@ public class GameConst : MonoBehaviour
     public int totalPowerToBP;
 
     public bool secondPushed;
+    public bool onIdle;
 
     public GameObject[] blocks;
     public List<GameObject> Edges;
@@ -113,6 +115,8 @@ public class GameConst : MonoBehaviour
 
         isEnergyFinished = false;
 
+		gameMode = DataScript.isGameModeEndless;
+
         //block = GameObject.FindWithTag("block");
 
        // gun = GameObject.FindWithTag("Gun");
@@ -129,12 +133,27 @@ public class GameConst : MonoBehaviour
 
         LastPosOfArray = 0f;
 
-        blockNumber = 15; // aslında 16 tane oluyor ilk blok da olduğu için
+        if(gameMode == 0)
+        {
+            //PlayerPrefs.SetInt("PlayerLevel",1);
+            Level = PlayerPrefs.GetInt("PlayerLevel");
+            Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
+        }
+        else if(gameMode == 1)
+        {
+            Level = 1;
+        }
+        else
+        {
+            Debug.LogError("Non existing game mode");
+        }
+
+        //level based oyunsa blok sayısı ona göre artsın yoksa düz 15den devam.
+        blockNumber = (gameMode == 0) ? 3 + Level * 3 : 15;
+        //blockNumber = 15; // aslında 16 tane oluyor ilk blok da olduğu için
 
         blocks = new GameObject[blockNumber + 1];
         //createNewLevel = false;
-
-        Level = 1;
 
         gameTime = 0f;
 
@@ -165,7 +184,45 @@ public class GameConst : MonoBehaviour
         StartCoroutine(LevelChangeState(Player.instance.speed.z + 150f,Player.instance.speed.z));
     }
 
+    //This is used for level based level endings
+    private IEnumerator LevelEndedState(float PlayerSpeedLimit, float PlayerSpeed)
+    {
+        yield return new WaitForSeconds(.3f);
 
+        onIdle = true;
+        PlayerPrefs.SetInt("PlayerLevel", Level);
+        Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
+		if (PlayerPrefs.GetInt ("MaxLevel") < Level) {
+			
+			PlayerPrefs.SetInt ("MaxLevel", Level);
+
+		}
+        GameObject coins = GameObject.FindWithTag("Coins");
+        GameObject levelHexogans = GameObject.FindWithTag("LevelHollows");
+        float speedRate = 10f;
+        float waitTime = .01f;
+        while (!PlayerAccelerator.PlayerFastEnough(Player.instance.speed.z, PlayerSpeedLimit))
+        {
+            Player.instance.speed.z += speedRate;
+            yield return new WaitForSeconds(waitTime);
+        }
+
+        bool changed = false;
+        while(onIdle)
+        {
+            if(Player.instance.transform.position.z >= coins.transform.GetChild(coins.transform.childCount - 3).transform.position.z + 50f && !changed)
+            {
+                changed = true;
+                uIScript.NextLevel();
+            }
+            LevelHollowGetDistance.SetHollow(levelHexogans.transform.GetChild(0).gameObject, LevelHollowGetDistance.GetDistance(levelHexogans.transform) + 10f);
+            levelHexogans.transform.GetChild(0).SetAsLastSibling();
+            yield return new WaitUntil(() => Player.instance.transform.position.z >= GameObject.FindWithTag("LevelHollows").transform.GetChild(GameObject.FindWithTag("LevelHollows").transform.childCount - 25).transform.position.z);
+        }
+
+    }
+
+    //This is used for Endless mode level ending
     private IEnumerator LevelChangeState(float PlayerSpeedLimit, float PlayerSpeed)
     {
         if (!isStarted)
@@ -181,9 +238,12 @@ public class GameConst : MonoBehaviour
             yield return new WaitForSeconds(.3f);
         }
         playerLock = true;
+
+        ObjectPooler.SharedInstance.CreateObjects("BrokenBlock", GameObject.FindWithTag("ALLPLATFORM").transform, blockNumber);
         BlockChanger();
         HollowSetter(blocks[0].gameObject.transform.position.z - 2f);
         gunScript.passedBlock = 0;
+
         //Debug.Log("Top hızlanmaya baslıyor. Top hızı :" + Player.instance.speed.z);
         float speedRate = 5f;
         float waitTime = .01f;
@@ -207,9 +267,9 @@ public class GameConst : MonoBehaviour
             Player.instance.speed.z -= speedRate;
             yield return new WaitForSeconds(waitTime);
         }
-        Player.instance.bulletProofSpeed = PlayerAccelerator.GetPlayerNormalSpeed() + (Player.instance.modeSpeedIncrease) + ((Player.instance.strikeConstant -1) * 2f);
+        Player.instance.bulletProofSpeed = PlayerAccelerator.GetPlayerNormalSpeed(Player.instance.initialSpeed) + (Player.instance.modeSpeedIncrease) + ((Player.instance.strikeConstant -1) * 2f);
         int m = Player.instance.mode;
-        Player.instance.speed.z = (m == (int)Player.Mode.normal) ? PlayerAccelerator.GetPlayerNormalSpeed() : Player.instance.bulletProofSpeed;
+        Player.instance.speed.z = (m == (int)Player.Mode.normal) ? PlayerAccelerator.GetPlayerNormalSpeed(Player.instance.initialSpeed) : Player.instance.bulletProofSpeed;
         //Player.instance.RayCalculator(0);
 
         yield return new WaitUntil(() => Player.instance.gameObject.transform.position.z >= blocks[0].gameObject.transform.position.z - 35f);
@@ -289,8 +349,15 @@ public class GameConst : MonoBehaviour
 
         Player.instance.speed.z = LevelDesigner.speedUp(Player.instance.speed.z);
         Player.instance.normalSpeed = Player.instance.speed.z;
-      
-        StartCoroutine(LevelChangeState(playerMAX,Player.instance.speed.z));
+
+        if(gameMode == 0)
+        {
+            StartCoroutine(LevelEndedState(playerMAX, Player.instance.speed.z));
+        }
+        else
+        {
+            StartCoroutine(LevelChangeState(playerMAX, Player.instance.speed.z));
+        }
     }
 
 

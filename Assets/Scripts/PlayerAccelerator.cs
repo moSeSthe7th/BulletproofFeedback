@@ -28,15 +28,15 @@ public static class PlayerAccelerator{
         }
     }
 
-    public static float GetPlayerNormalSpeed()
+    public static float GetPlayerNormalSpeed(float playerInitSpeed)
     {
        if(GameConst.Level == 1)
         {
-            return Player.instance.initialSpeed;
+            return playerInitSpeed;
         }
         else
         {
-            return Player.instance.initialSpeed + ((GameConst.Level - 1) * LevelDesigner.speedUp(0));
+            return playerInitSpeed + ((GameConst.Level - 1) * LevelDesigner.speedUp(0));
         }
     }
 }

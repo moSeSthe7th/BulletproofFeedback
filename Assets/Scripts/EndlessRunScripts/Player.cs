@@ -104,7 +104,8 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
         }
         initialSpeed = 85f;
-        speed = new Vector3(0f, 0f, initialSpeed);
+
+        speed = new Vector3(0f, 0f, PlayerAccelerator.GetPlayerNormalSpeed(initialSpeed));
         mode = (int)Mode.normal;
     }
 
@@ -432,7 +433,7 @@ public class Player : MonoBehaviour
     {
         isOnStrike = true;
         mode = (int)Mode.bulletProof;
-        bulletProofSpeed = PlayerAccelerator.GetPlayerNormalSpeed() + modeSpeedIncrease;
+        bulletProofSpeed = PlayerAccelerator.GetPlayerNormalSpeed(initialSpeed) + modeSpeedIncrease;
         GameConst.instance.gatheredPower = 0;
         pointIndex += 1;
         strikeConstant += 1;
@@ -442,7 +443,7 @@ public class Player : MonoBehaviour
     public void changeToNormal()
     {
         isOnStrike = false;
-        normalSpeed = PlayerAccelerator.GetPlayerNormalSpeed();
+        normalSpeed = PlayerAccelerator.GetPlayerNormalSpeed(initialSpeed);
         mode = (int)Mode.normal;
         energyTot = GameConst.instance.energyTime / 3;
         strike = 0;
@@ -563,7 +564,7 @@ public class Player : MonoBehaviour
         float z = transform.position.z - 15f;
         transform.position = new Vector3(0, height, z);
         transform.localScale = initialScale;
-        speed = new Vector3(0f, 0f, PlayerAccelerator.GetPlayerNormalSpeed());
+        speed = new Vector3(0f, 0f, PlayerAccelerator.GetPlayerNormalSpeed(initialSpeed));
         changeToNormal();
         SetPlayerStateForward();
         energyTot = GameConst.instance.energyTime / 3f;

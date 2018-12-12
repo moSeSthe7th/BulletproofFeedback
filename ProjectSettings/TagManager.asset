@@ -24,6 +24,7 @@ TagManager:
   - ShopContent
   - ExplodeEz
   - WarpMode
+  - BrokenBlock
   layers:
   - Default
   - TransparentFX
@@ -41,7 +42,7 @@ TagManager:
   - powerUp
   - coin
   - edge
-  - 
+  - brokenBlock
   - 
   - 
   - 

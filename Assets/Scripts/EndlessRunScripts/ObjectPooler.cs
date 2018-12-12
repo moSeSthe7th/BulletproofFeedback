@@ -31,6 +31,7 @@ public class ObjectPooler : MonoBehaviour
     ObjectPoolItem hollow;
     ObjectPoolItem fullHollows;
     ObjectPoolItem coin;
+    ObjectPoolItem brokenBlock;
 
     void Awake()
     {
@@ -44,7 +45,6 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
-
     private void Start()
     {
         GameObject Bullet = GameObject.FindWithTag("Bullet");
@@ -53,6 +53,7 @@ public class ObjectPooler : MonoBehaviour
         GameObject Hollow = GameObject.FindWithTag("HollowFill");
         GameObject LevelHollows = GameObject.FindWithTag("LevelHollows");
         GameObject Coins = GameObject.FindWithTag("Coins");
+        GameObject BrokenBlock = GameObject.FindWithTag("BrokenBlock");
 
         bullet = new ObjectPoolItem();
 
@@ -70,6 +71,16 @@ public class ObjectPooler : MonoBehaviour
         GameConst.instance.blocks[0] = Block;
         Block.SetActive(false);
 
+        brokenBlock = new ObjectPoolItem();
+
+        brokenBlock.shouldExpand = true;
+        brokenBlock.amountToPool = block.amountToPool + 1;
+        brokenBlock.objectToPool = BrokenBlock;
+        brokenBlock.objectTag = BrokenBlock.tag;
+
+        BrokenBlock.SetActive(false);
+        //Destroy(BrokenBlock);
+            
         edge = new ObjectPoolItem();
 
         edge.shouldExpand = true;
@@ -119,6 +130,7 @@ public class ObjectPooler : MonoBehaviour
         itemsToPool.Add(edge);
         itemsToPool.Add(hollow);
         itemsToPool.Add(fullHollows);
+        itemsToPool.Add(brokenBlock);
 
         pooledObjects = new List<GameObject>();
         //Debug.Log("Object Pooler created pooled objects");
@@ -154,16 +166,20 @@ public class ObjectPooler : MonoBehaviour
                     {
                         GameConst.instance.blocks[i + 1] = obj;
                     }
-                    if (item == edge)
+                    else if (item == edge)
                     {
                         GameConst.instance.Edges.Add(obj);
                         distEdge = PlatformScript.SetPlatform(GameConst.instance.Edges[i], distEdge);
                     }
-                    if (item == hollow)
+                    else if (item == hollow)
                     {
                         obj.SetActive(false);
                         GameConst.instance.Hollows.Add(obj);
                         GameConst.instance.Hollows[i + 1].GetComponent<HollowFillScript>().SetQueNumber(i + 1);
+                    }
+                    else if(item == brokenBlock)
+                    {
+                        obj.SetActive(false);
                     }
                 }
             }
@@ -174,10 +190,18 @@ public class ObjectPooler : MonoBehaviour
     {
         for (int i = 0; i < pooledObjects.Count; i++)
         {
-            if (!pooledObjects[i].activeInHierarchy && pooledObjects[i].tag == tag)
+            if(pooledObjects[i] !=null)
             {
-                return pooledObjects[i];
+                if (!pooledObjects[i].activeInHierarchy && pooledObjects[i].tag == tag)
+                {
+                    return pooledObjects[i];
+                }
             }
+            else
+            {
+                pooledObjects.Remove(pooledObjects[i]);
+            }
+
         }
         foreach (ObjectPoolItem item in itemsToPool)
         {
@@ -199,10 +223,18 @@ public class ObjectPooler : MonoBehaviour
     {
         for (int i = 0; i < pooledObjects.Count; i++)
         {
-            if (!pooledObjects[i].activeInHierarchy && pooledObjects[i].tag == tag)
+            if (pooledObjects[i] != null)
             {
-                return pooledObjects[i];
+                if (!pooledObjects[i].activeInHierarchy && pooledObjects[i].tag == tag)
+                {
+                    return pooledObjects[i];
+                }
             }
+            else
+            {
+                pooledObjects.Remove(pooledObjects[i]);
+            }
+
         }
         foreach (ObjectPoolItem item in itemsToPool)
         {
@@ -217,5 +249,43 @@ public class ObjectPooler : MonoBehaviour
             }
         }
         return null;
+    }
+
+
+    //Creates objects until
+    public void CreateObjects(string tag, Transform parent,int num)
+    {
+        foreach (ObjectPoolItem item in itemsToPool)
+        {
+            if (item.objectTag == tag)
+            {
+                if (item.shouldExpand)
+                {
+                    int createNumber = num;        //çok fazla yaratmamak için en. her levelde blok sayısı kadar olcak aşağı yukarı 
+                    for (int i = pooledObjects.Count - 1; i > 0; i--) //Searching list reverse, because brokenblock objects are in the last.
+                    {
+                        if (pooledObjects[i] != null)
+                        {
+                            if (pooledObjects[i].tag == tag)
+                            {
+                                if (createNumber > num / 2)
+                                    createNumber -= 1;
+                                else
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            pooledObjects.Remove(pooledObjects[i]);
+                        }
+                    }
+                    for (int i = 0; i <= createNumber;i++)
+                    {
+                        GameObject obj = (GameObject)Instantiate(item.objectToPool, parent);
+                        pooledObjects.Add(obj);
+                    }
+                }
+            }
+        }
     }
 }

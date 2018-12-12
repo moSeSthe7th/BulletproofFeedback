@@ -23,9 +23,9 @@ public class BlockColorChanger : ColorChanger {
 		}
 	}
 
-	void LateUpdate()
+	void Update()
 	{
-		isChanged = ChangeColor(2, childs, normalColor, bulletProofColor);
+        isChanged = ChangeColor(this.transform.childCount, childs, normalColor, bulletProofColor);
 	}
 
     public Color GetColor(){
