@@ -12,7 +12,7 @@ public class UIScript : MonoBehaviour
     //public GameObject player;
     public Text highScoreText;
     public Text highScorePoint;
-   
+	public Text newHighScoreMade;
    
     public Text countDown;
 	public Text panelPointCounterText;
@@ -22,6 +22,8 @@ public class UIScript : MonoBehaviour
 	public GameObject gameOverPanel;
 
     public GameObject NextLevelPanel;
+
+	public Slider levelIndicateSlider;
 
     public Button secondChance;
 
@@ -45,7 +47,12 @@ public class UIScript : MonoBehaviour
 
     void Start()
     {
-        highScore = PlayerPrefs.GetInt("highScore", highScore);
+		if (DataScript.isGameModeEndless == 1) {
+			highScore = PlayerPrefs.GetInt ("highScore", highScore);
+		} else {
+			highScore = PlayerPrefs.GetInt("LevelHighScore", highScore);
+		}
+        
         ads = FindObjectOfType(typeof(AdsService)) as AdsService;
 
         highScorePoint.gameObject.SetActive(false);
@@ -193,18 +200,49 @@ public class UIScript : MonoBehaviour
         setGoldText();
         goldCounterText.gameObject.SetActive(true);
 
-        highScoreText.text = "High Score";
-        highScoreText.gameObject.SetActive(true);
+        
+        
 
-        if (GameConst.instance.points > highScore)
-        {
-            PlayerPrefs.SetInt("highScore", GameConst.instance.points);
-        }
+		if (DataScript.isGameModeEndless == 1) {
+			if (GameConst.instance.points > highScore) {
+				PlayerPrefs.SetInt ("highScore", GameConst.instance.points);
+				highScore = GameConst.instance.points;
+				highScorePoint.gameObject.SetActive (false);
+				highScoreText.gameObject.SetActive (false);
+				newHighScoreMade.gameObject.SetActive (true);
 
-        highScore = PlayerPrefs.GetInt("highScore", highScore);
+			} else {
+				highScore = PlayerPrefs.GetInt ("highScore", highScore);
+				highScoreText.text = "High Score";
+				highScorePoint.text = highScore.ToString();
+				highScorePoint.gameObject.SetActive (true);
+				highScoreText.gameObject.SetActive (true);
+				newHighScoreMade.gameObject.SetActive (false);
+			}
 
-        highScorePoint.text = highScore.ToString();
-        highScorePoint.gameObject.SetActive(true);
+
+		} else {
+			if (GameConst.instance.points > highScore) {
+				PlayerPrefs.SetInt ("LevelHighScore", GameConst.instance.points);
+				highScore = GameConst.instance.points;
+				highScorePoint.gameObject.SetActive (false);
+				highScoreText.gameObject.SetActive (false);
+				newHighScoreMade.gameObject.SetActive (true);
+
+			} else {
+				highScore = PlayerPrefs.GetInt ("LevelHighScore", highScore);
+				highScoreText.text = "High Score";
+				highScorePoint.text = highScore.ToString();
+				highScorePoint.gameObject.SetActive (true);
+				highScoreText.gameObject.SetActive (true);
+				newHighScoreMade.gameObject.SetActive (false);
+			}
+
+
+		}
+
+        
+       
         pointCounterText.gameObject.SetActive(false);
 
         energySlider.gameObject.SetActive(false);
@@ -218,7 +256,7 @@ public class UIScript : MonoBehaviour
 
     public void startGame()
     {
-        
+		levelIndicateSlider.gameObject.SetActive (true);
 		gameOverPanel.SetActive (false);
         Time.timeScale = 1f;
         //energySlider.gameObject.SetActive(true);

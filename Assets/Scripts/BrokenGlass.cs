@@ -11,25 +11,30 @@ public class BrokenGlass : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision){
         //GameObject brokenBlock = Instantiate (brokenObject,transform.position,Quaternion.Euler(270,180,0),GameObject.FindWithTag("ALLPLATFORM").transform);
-        GameObject brokenBlock = ObjectPooler.SharedInstance.GetPooledObject("BrokenBlock", GameObject.FindWithTag("ALLPLATFORM").transform);
-        if(brokenBlock != null)
+        Vector3 normal = collision.contacts[0].normal;
+        if(normal == -1 * this.gameObject.transform.up)
         {
-            brokenBlock.transform.position = this.transform.position;
-            brokenBlock.transform.rotation = Quaternion.Euler(270, 180, 0);
-            brokenBlock.SetActive(true);
-            brokenBlock.GetComponent<DestroyAfterSeconds>().enabled = true;
-        }
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
-
-        Vector3 explosionPos = collision.contacts[0].point;
-		Collider[] colliders = Physics.OverlapSphere (explosionPos, explosionRadius);
-
-		foreach (Collider hit in colliders) {
-			if (hit.attachedRigidbody) 
+            GameObject brokenBlock = ObjectPooler.SharedInstance.GetPooledObject("BrokenBlock", GameObject.FindWithTag("ALLPLATFORM").transform);
+            if (brokenBlock != null)
             {
-				hit.attachedRigidbody.AddExplosionForce (power, explosionPos, explosionRadius, upwardsForce);
-			}
-		}
+                brokenBlock.transform.position = this.transform.position;
+                brokenBlock.transform.rotation = Quaternion.Euler(270, 180, 0);
+                brokenBlock.SetActive(true);
+                brokenBlock.GetComponent<DestroyAfterSeconds>().enabled = true;
+            }
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+            Vector3 explosionPos = collision.contacts[0].point;
+            Collider[] colliders = Physics.OverlapSphere(explosionPos, explosionRadius);
+
+            foreach (Collider hit in colliders)
+            {
+                if (hit.attachedRigidbody)
+                {
+                    hit.attachedRigidbody.AddExplosionForce(power, explosionPos, explosionRadius, upwardsForce);
+                }
+            }
+        }
 	}
 
 }

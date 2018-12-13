@@ -7,7 +7,7 @@ public class HighScorePointScript : MonoBehaviour {
 	public Text highScore;
 
 	void Start () {
-		highScore.text = PlayerPrefs.GetInt("highScore",0).ToString() ;
+		highScore.text = PlayerPrefs.GetInt("LevelHighScore",0).ToString() ;
 	}
 	
 

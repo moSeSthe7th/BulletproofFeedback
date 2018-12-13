@@ -10,7 +10,7 @@ public class BlockScript : Rotatable
     public int[] childPos;
 
     private int shiftDecider;
-    private int shiftProbability;
+    private float shiftProbability;
     private bool willShift;
     private bool isIncreased;
     private int tempRotCounter;
@@ -19,7 +19,7 @@ public class BlockScript : Rotatable
 
     private void Start()
     {
-        shiftProbability = 0;
+        //shiftProbability = 0;
         isIncreased = false;
     }
 
@@ -72,18 +72,36 @@ public class BlockScript : Rotatable
         }
     }
 
-    private void ShouldShift()
+    private void ShouldShift() // change blocks shift probabilty
     {
-        if (GameConst.Level > 1 && shiftProbability < 70)
+        if(GameConst.instance.gameMode == 0)
         {
-            shiftProbability += 7;
+            if (GameConst.Level >= 5)
+            {
+                //shiftProbability = (GameConst.Level * GameConst.Level) / (int)(GameConst.Level / 3.5f);
+                shiftProbability = (20f) / (5f/(float)GameConst.Level); //basicly start with 20 and increase 4 by 4 each level
+                if (shiftProbability > 70)
+                    shiftProbability = 70;
+            }
+            else
+            {
+                shiftProbability = 0;
+            }
         }
+        else if(GameConst.instance.gameMode == 1)
+        {
+            if (GameConst.Level > 1 && shiftProbability < 70)
+            {
+                shiftProbability += 7;
+            }
+        }
+        Debug.Log(shiftProbability);
     }
 
     public void Shift()
     {
         shiftDecider = Random.Range(0, 100);
-
+        Debug.Log(shiftDecider + " " + shiftProbability);
         if (shiftDecider <= shiftProbability)
         {
             willShift = true;

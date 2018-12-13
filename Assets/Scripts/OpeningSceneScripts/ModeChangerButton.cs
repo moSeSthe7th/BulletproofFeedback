@@ -7,6 +7,7 @@ public class ModeChangerButton : MonoBehaviour {
 
 	public Button levelsButton;
 	private PlayGameScript playGameScript;
+	public Text highScoreText;
 
 	// Use this for initialization
 	void Start() {
@@ -21,8 +22,11 @@ public class ModeChangerButton : MonoBehaviour {
 	public void changeModeText(Text modeText){
 		if (DataScript.isGameModeEndless == 1) {
 			DataScript.isGameModeEndless = 0;
+			highScoreText.text = PlayerPrefs.GetInt ("LevelHighScore", 0).ToString ();
+
 		} else {
 			DataScript.isGameModeEndless = 1;
+			highScoreText.text = PlayerPrefs.GetInt ("highScore", 0).ToString ();
 		}
 		playGameScript.setPlayButtonText ();
 	}

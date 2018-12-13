@@ -90,6 +90,7 @@ public class GameConst : MonoBehaviour
             Debug.LogError("New game destroyed");
             Destroy(this.gameObject);
         }
+
         Time.timeScale = 0f;
         isGameOn = false;
 
@@ -103,6 +104,21 @@ public class GameConst : MonoBehaviour
             PlayerPrefs.SetInt("PlayedTime", playedTime);
         }
 
+        gameMode = DataScript.isGameModeEndless;
+
+        if (gameMode == 0)
+        {
+            Level = PlayerPrefs.GetInt("PlayerLevel");
+            Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
+        }
+        else if (gameMode == 1)
+        {
+            Level = 1;
+        }
+        else
+        {
+            Debug.LogError("Non existing game mode");
+        }
     }
 
     public void Start()
@@ -114,8 +130,6 @@ public class GameConst : MonoBehaviour
         isReverseLevel = false;
 
         isEnergyFinished = false;
-
-		gameMode = DataScript.isGameModeEndless;
 
         //block = GameObject.FindWithTag("block");
 
@@ -132,22 +146,6 @@ public class GameConst : MonoBehaviour
         //    blockScript = FindObjectOfType(typeof(BlockScript)) as BlockScript;
 
         LastPosOfArray = 0f;
-
-        if(gameMode == 0)
-        {
-            //PlayerPrefs.SetInt("PlayerLevel",1);
-            Level = PlayerPrefs.GetInt("PlayerLevel");
-            Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
-        }
-        else if(gameMode == 1)
-        {
-            Level = 1;
-        }
-        else
-        {
-            Debug.LogError("Non existing game mode");
-        }
-
         //level based oyunsa blok sayısı ona göre artsın yoksa düz 15den devam.
         blockNumber = (gameMode == 0) ? 3 + Level * 3 : 15;
         //blockNumber = 15; // aslında 16 tane oluyor ilk blok da olduğu için
@@ -181,7 +179,7 @@ public class GameConst : MonoBehaviour
 
         hollowUpdateDist = BlockDistUpdate * 2; // arada 3 blok için 3 le çarp etc. 
 
-        StartCoroutine(LevelChangeState(Player.instance.speed.z + 150f,Player.instance.speed.z));
+        StartCoroutine(LevelChangeState(Player.instance.speed.z + 180f,Player.instance.speed.z));
     }
 
     //This is used for level based level endings
@@ -189,13 +187,15 @@ public class GameConst : MonoBehaviour
     {
         yield return new WaitForSeconds(.3f);
 
+        playerLock = true;
         onIdle = true;
-        PlayerPrefs.SetInt("PlayerLevel", Level);
-        Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
-		if (PlayerPrefs.GetInt ("MaxLevel") < Level) {
-			
-			PlayerPrefs.SetInt ("MaxLevel", Level);
 
+        PlayerPrefs.SetInt("PlayerLevel", Level);
+        //Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
+
+		if (PlayerPrefs.GetInt ("MaxLevel") < Level) 
+        {
+			PlayerPrefs.SetInt ("MaxLevel", Level);
 		}
         GameObject coins = GameObject.FindWithTag("Coins");
         GameObject levelHexogans = GameObject.FindWithTag("LevelHollows");
@@ -210,7 +210,7 @@ public class GameConst : MonoBehaviour
         bool changed = false;
         while(onIdle)
         {
-            if(Player.instance.transform.position.z >= coins.transform.GetChild(coins.transform.childCount - 3).transform.position.z + 50f && !changed)
+            if(Player.instance.transform.position.z >= coins.transform.GetChild(coins.transform.childCount - 1).transform.position.z + 50f && !changed)
             {
                 changed = true;
                 uIScript.NextLevel();
@@ -259,9 +259,9 @@ public class GameConst : MonoBehaviour
         {
             if (PlayerSpeed + 70f >= Player.instance.speed.z && !gunScript.isShooting)
             {
-                gunScript.StartGun();
                 gunScript.blockNumb = 0;
                 gunScript.totBulletSended = 0;
+                gunScript.StartGun();
                 waitTime = .03f;
             } 
             Player.instance.speed.z -= speedRate;
@@ -360,6 +360,10 @@ public class GameConst : MonoBehaviour
         }
     }
 
+    private int LevelBlockCountDecider()
+    {
+        return 0;
+    }
 
     private void Update()
     {

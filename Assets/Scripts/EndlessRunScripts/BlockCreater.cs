@@ -27,11 +27,21 @@ public class BlockCreater
             GameConst.instance.SameLineBlock = 0;
         }
         Random.InitState(Random.Range(0,100));
-        foreach(MeshRenderer t in pooledBlock.GetComponentsInChildren<MeshRenderer>())
+        foreach(MeshRenderer t in pooledBlock.GetComponentsInChildren<MeshRenderer>()) //Added because when smashing block mesh renderes are disabled
         {
             t.enabled = true;
         }
-        int r =(doubleBlockNum == 0) ? 0 :(!beforeActivated) ? Random.Range(0, GameConst.Level + 1) :(beforeActivated) ? Random.Range(0,GameConst.Level + 3): 1;
+
+        int r = 0;
+
+        if(GameConst.instance.gameMode == 0)
+        {
+            r = (doubleBlockNum == 0) ? 0 : (!beforeActivated) ? Random.Range(0, GameConst.Level + 1) : (beforeActivated) ? Random.Range(0, GameConst.Level + 3) : 1;
+        }
+        else
+        {
+            r = (doubleBlockNum == 0) ? 0 : (!beforeActivated) ? Random.Range(0, GameConst.Level + 1) : (beforeActivated) ? Random.Range(0, GameConst.Level + 3) : 1;
+        }
         if(doubleBlockNum <= (GameConst.instance.blocks.Length * 3) / (GameConst.Level ) && r < (GameConst.Level / 3f))
         {
             beforeActivated = true;
