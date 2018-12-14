@@ -28,14 +28,10 @@ public class LevelSelectionButton : MonoBehaviour {
 			gameObject.GetComponentInChildren<Text> ().color = Color.black;
 		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	public void selectLevel(){
-		
+		DataScript.isSessionEnded = true;
+		DataScript.pointHolder = 0;
 		PlayerPrefs.SetInt ("PlayerLevel", levelofButton);
 		playGameScript.setPlayButtonText ();
 		//scrollViewObj.gameObject.SetActive (false);

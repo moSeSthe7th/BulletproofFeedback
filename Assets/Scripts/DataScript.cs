@@ -12,5 +12,9 @@ public static class DataScript {
 	//level bitince güncellenir eğer gecilen level = max levelsa ve startingscene nin startında alınır. playerprefste de tutulabilir
 	//public static int maxLevel;
 	public static int isGameModeEndless; // 0 for level 1 for endless
+	public static Color levelModeBlockColor; 
+	public static Color levelModeHexogenColor;
+    public static int pointHolder;
+    public static bool isSessionEnded;
 
 }

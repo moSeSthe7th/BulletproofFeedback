@@ -36,7 +36,6 @@ public class GameConst : MonoBehaviour
 
     public float gameTime;
 
-
     public float energyTime;
 
     //public bool createNewLevel;
@@ -52,7 +51,7 @@ public class GameConst : MonoBehaviour
     //private CameraScript cameraScript;
     //private GameObject block;
     private GunScript gunScript;
-   // private GameObject gun;
+    // private GameObject gun;
 
     //  private BlockScript blockScript;
 
@@ -67,14 +66,14 @@ public class GameConst : MonoBehaviour
 
     public bool playerLock;
 
-   /* private Coroutine PlayerSwipeLeft;
-    private Coroutine PlayerSwipeRight;
+    /* private Coroutine PlayerSwipeLeft;
+     private Coroutine PlayerSwipeRight;
 
-    private Coroutine BlockSwipeLeft;
-    private Coroutine BlockSwipeRight;
+     private Coroutine BlockSwipeLeft;
+     private Coroutine BlockSwipeRight;
 
-    private Coroutine ChildBlockSwipeLeft;
-    private Coroutine ChildBlockSwipeRight;*/
+     private Coroutine ChildBlockSwipeLeft;
+     private Coroutine ChildBlockSwipeRight;*/
 
     public void Awake()
     {
@@ -109,7 +108,7 @@ public class GameConst : MonoBehaviour
         if (gameMode == 0)
         {
             Level = PlayerPrefs.GetInt("PlayerLevel");
-            Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
+            //Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
         }
         else if (gameMode == 1)
         {
@@ -133,7 +132,7 @@ public class GameConst : MonoBehaviour
 
         //block = GameObject.FindWithTag("block");
 
-       // gun = GameObject.FindWithTag("Gun");
+        // gun = GameObject.FindWithTag("Gun");
 
         //cameraScript = FindObjectOfType(typeof(CameraScript)) as CameraScript;
 
@@ -147,7 +146,7 @@ public class GameConst : MonoBehaviour
 
         LastPosOfArray = 0f;
         //level based oyunsa blok sayısı ona göre artsın yoksa düz 15den devam.
-        blockNumber = (gameMode == 0) ? 3 + Level * 3 : 15;
+        blockNumber = (gameMode == 0) ? 3 + Level * 3 : 15; // aslında 16 tane oluyor ilk blok da olduğu için
         //blockNumber = 15; // aslında 16 tane oluyor ilk blok da olduğu için
 
         blocks = new GameObject[blockNumber + 1];
@@ -163,7 +162,14 @@ public class GameConst : MonoBehaviour
 
         SameLineBlock = 0;
 
-        points = 0;
+        if (gameMode == 0 && !DataScript.isSessionEnded)
+        {
+            points = DataScript.pointHolder;
+        }
+        else
+        {
+            points = 0;
+        }
 
         totalPowerToBP = 1;
 
@@ -179,28 +185,40 @@ public class GameConst : MonoBehaviour
 
         hollowUpdateDist = BlockDistUpdate * 2; // arada 3 blok için 3 le çarp etc. 
 
-        StartCoroutine(LevelChangeState(Player.instance.speed.z + 180f,Player.instance.speed.z));
+        StartCoroutine(LevelChangeState(Player.instance.speed.z + 180f, Player.instance.speed.z));
     }
 
     //This is used for level based level endings
     private IEnumerator LevelEndedState(float PlayerSpeedLimit, float PlayerSpeed)
     {
+		
+
         yield return new WaitForSeconds(.3f);
+
+
+		///////////////////////////////////////////////////reklerrrr////////////////////////////////////////////////////////////////
+		float randFlt = Random.Range (0.01f, 0.65f);
+		DataScript.levelModeBlockColor = HueChanger.hueChanger (DataScript.levelModeBlockColor, randFlt);//Random.Range (0f,1f));
+		DataScript.levelModeHexogenColor = HueChanger.hueChanger (DataScript.levelModeBlockColor, randFlt);//Random.Range (0f,1f));
+		///////////////////////////////////////////////////reklerrrr//////////////////////////////////////////////////////////////
 
         playerLock = true;
         onIdle = true;
+        DataScript.pointHolder = points;
+        DataScript.isSessionEnded = false;
 
         PlayerPrefs.SetInt("PlayerLevel", Level);
         //Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
 
-		if (PlayerPrefs.GetInt ("MaxLevel") < Level) 
+        if (PlayerPrefs.GetInt("MaxLevel") < Level)
         {
-			PlayerPrefs.SetInt ("MaxLevel", Level);
-		}
+            PlayerPrefs.SetInt("MaxLevel", Level);
+        }
         GameObject coins = GameObject.FindWithTag("Coins");
         GameObject levelHexogans = GameObject.FindWithTag("LevelHollows");
         float speedRate = 10f;
         float waitTime = .01f;
+
         while (!PlayerAccelerator.PlayerFastEnough(Player.instance.speed.z, PlayerSpeedLimit))
         {
             Player.instance.speed.z += speedRate;
@@ -208,9 +226,9 @@ public class GameConst : MonoBehaviour
         }
 
         bool changed = false;
-        while(onIdle)
+        while (onIdle)
         {
-            if(Player.instance.transform.position.z >= coins.transform.GetChild(coins.transform.childCount - 1).transform.position.z + 50f && !changed)
+            if (Player.instance.transform.position.z >= coins.transform.GetChild(coins.transform.childCount - 1).transform.position.z + 50f && !changed)
             {
                 changed = true;
                 uIScript.NextLevel();
@@ -247,7 +265,7 @@ public class GameConst : MonoBehaviour
         //Debug.Log("Top hızlanmaya baslıyor. Top hızı :" + Player.instance.speed.z);
         float speedRate = 5f;
         float waitTime = .01f;
-        while(!PlayerAccelerator.PlayerFastEnough(Player.instance.speed.z,PlayerSpeedLimit))
+        while (!PlayerAccelerator.PlayerFastEnough(Player.instance.speed.z, PlayerSpeedLimit))
         {
             Player.instance.speed.z += speedRate;
             yield return new WaitForSeconds(waitTime);
@@ -255,7 +273,7 @@ public class GameConst : MonoBehaviour
 
         yield return new WaitUntil(() => Player.instance.transform.position.z >= GameObject.FindWithTag("LevelHollows").transform.GetChild(GameObject.FindWithTag("LevelHollows").transform.childCount - 12).transform.position.z);
 
-        while(!PlayerAccelerator.PlayerNormalSpeed(Player.instance.speed.z,PlayerSpeed))
+        while (!PlayerAccelerator.PlayerNormalSpeed(Player.instance.speed.z, PlayerSpeed))
         {
             if (PlayerSpeed + 70f >= Player.instance.speed.z && !gunScript.isShooting)
             {
@@ -263,11 +281,11 @@ public class GameConst : MonoBehaviour
                 gunScript.totBulletSended = 0;
                 gunScript.StartGun();
                 waitTime = .03f;
-            } 
+            }
             Player.instance.speed.z -= speedRate;
             yield return new WaitForSeconds(waitTime);
         }
-        Player.instance.bulletProofSpeed = PlayerAccelerator.GetPlayerNormalSpeed(Player.instance.initialSpeed) + (Player.instance.modeSpeedIncrease) + ((Player.instance.strikeConstant -1) * 2f);
+        Player.instance.bulletProofSpeed = PlayerAccelerator.GetPlayerNormalSpeed(Player.instance.initialSpeed) + (Player.instance.modeSpeedIncrease) + ((Player.instance.strikeConstant - 1) * 2f);
         int m = Player.instance.mode;
         Player.instance.speed.z = (m == (int)Player.Mode.normal) ? PlayerAccelerator.GetPlayerNormalSpeed(Player.instance.initialSpeed) : Player.instance.bulletProofSpeed;
         //Player.instance.RayCalculator(0);
@@ -280,7 +298,7 @@ public class GameConst : MonoBehaviour
         CoinsScript.IncreaseAndActivateCoins(GameObject.FindWithTag("Coins"));
         AddLevelHollow(2);
         //createNewLevel = false;
-        StopCoroutine(LevelChangeState(PlayerSpeedLimit,PlayerSpeed));
+        StopCoroutine(LevelChangeState(PlayerSpeedLimit, PlayerSpeed));
     }
 
     private void BlockChanger()
@@ -311,10 +329,10 @@ public class GameConst : MonoBehaviour
         }
     }
 
-  /*  public void ReverseLevel()
-    {
-        cameraScript.changeCameraAngle();
-    }*/
+    /*  public void ReverseLevel()
+      {
+          cameraScript.changeCameraAngle();
+      }*/
 
     public void PointDecider(bool strike)
     {
@@ -350,7 +368,7 @@ public class GameConst : MonoBehaviour
         Player.instance.speed.z = LevelDesigner.speedUp(Player.instance.speed.z);
         Player.instance.normalSpeed = Player.instance.speed.z;
 
-        if(gameMode == 0)
+        if (gameMode == 0)
         {
             StartCoroutine(LevelEndedState(playerMAX, Player.instance.speed.z));
         }
@@ -362,7 +380,7 @@ public class GameConst : MonoBehaviour
 
     private int LevelBlockCountDecider()
     {
-        return 0;
+        return 10 * ((Level - 1) / Level);
     }
 
     private void Update()
@@ -373,42 +391,42 @@ public class GameConst : MonoBehaviour
         }
     }
 
-	public IEnumerator CountDown()
-	{
-		int timer = 3;
-		uIScript.countDown.gameObject.SetActive(true);
-		while (timer >= 1)
-		{
-			uIScript.countDown.text = timer.ToString();
-			yield return new WaitForSecondsRealtime(1f);;
-			timer--;
-			yield return null;
-		}
-		uIScript.countDown.gameObject.SetActive(false);
-		if (!isStarted)
-		{
-			isStarted = true;
-			isGameOn = true;
-			gunScript.StartGun();
-			Time.timeScale = 1f;
-			uIScript.startGame();
-			StopCoroutine(CountDown());
-			yield break;
-		}
-		else
-		{
-			Time.timeScale = 1f;
-			isGameOn = true;
+    public IEnumerator CountDown()
+    {
+        int timer = 3;
+        uIScript.countDown.gameObject.SetActive(true);
+        while (timer >= 1)
+        {
+            uIScript.countDown.text = timer.ToString();
+            yield return new WaitForSecondsRealtime(1f); ;
+            timer--;
+            yield return null;
+        }
+        uIScript.countDown.gameObject.SetActive(false);
+        if (!isStarted)
+        {
+            isStarted = true;
+            isGameOn = true;
+            gunScript.StartGun();
+            Time.timeScale = 1f;
+            uIScript.startGame();
+            StopCoroutine(CountDown());
+            yield break;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            isGameOn = true;
             GameObject.FindWithTag("Explode").GetComponent<ExplosionParticleScript>().StopExplosion();
             gunScript.StartGun();
-			StopCoroutine(uIScript.AdvertiseReward());
-			StopCoroutine(CountDown());
-			if (uIScript.secondChance.gameObject.activeInHierarchy)
-			{
-				uIScript.secondChance.gameObject.SetActive(false);
-			}
-		}
-	}
+            StopCoroutine(uIScript.AdvertiseReward());
+            StopCoroutine(CountDown());
+            if (uIScript.secondChance.gameObject.activeInHierarchy)
+            {
+                uIScript.secondChance.gameObject.SetActive(false);
+            }
+        }
+    }
 }
 
 

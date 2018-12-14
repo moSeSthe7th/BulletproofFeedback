@@ -601,6 +601,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelsButton: {fileID: 551648118}
   highScoreText: {fileID: 1346508583}
+  blockMaterial: {fileID: 2100000, guid: 6e13b628221984b6ab9f100c430f7ca9, type: 2}
+  hexogenMaterial: {fileID: 2100000, guid: 57680a71f75064dbeb6534daea43f9f9, type: 2}
 --- !u!1001 &236578339
 Prefab:
   m_ObjectHideFlags: 0
@@ -942,6 +944,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb34f0be81d6fb04191edc2a9505ebea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockMaterial: {fileID: 2100000, guid: 6e13b628221984b6ab9f100c430f7ca9, type: 2}
+  hexogenMaterial: {fileID: 2100000, guid: 57680a71f75064dbeb6534daea43f9f9, type: 2}
 --- !u!114 &340674852
 MonoBehaviour:
   m_ObjectHideFlags: 0

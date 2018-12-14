@@ -6,9 +6,32 @@ using UnityEngine;
 
 public class GameEnteringScript : MonoBehaviour {
     
+	public Material blockMaterial;
+	public Material hexogenMaterial;
+
 	void Start (){
 
-		DataScript.isGameModeEndless = 0;
+
+		if (DataScript.isGameModeEndless != 1) {
+			DataScript.isGameModeEndless = 0;
+			float randFlt = (PlayerPrefs.GetInt("PlayerLevel") == 1) ? 0 : Random.Range (0.01f, 0.65f);
+			DataScript.levelModeBlockColor = HueChanger.hueChanger (blockMaterial.GetColor ("_Color"), randFlt);
+			DataScript.levelModeHexogenColor = HueChanger.hueChanger (hexogenMaterial.GetColor ("_Color"), randFlt);
+		}
+	
+
+		/*if (!PlayerPrefs.HasKey ("gameMode")) {
+			PlayerPrefs.SetInt ("gameMode", 0);
+		}
+
+		if (PlayerPrefs.GetInt ("gameMode") == 0) {
+			
+			Debug.Log ("random : " + randFlt + " " + " Color : " + DataScript.levelModeHexogenColor);
+		} else {
+			Debug.LogWarning ("endless");
+			DataScript.isGameModeEndless = 1;
+		}*/
+
 
 		if (!PlayerPrefs.HasKey("PlayerLevel"))
 		{

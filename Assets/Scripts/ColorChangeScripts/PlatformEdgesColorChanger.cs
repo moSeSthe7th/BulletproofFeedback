@@ -20,6 +20,7 @@ public class PlatformEdgesColorChanger : ColorChanger {
 			bulletProofColor[i] = platformEdgesColor;
             i++;
         }
+		childs[0].GetComponent<Renderer>().material.SetColor("_Color", DataScript.levelModeHexogenColor);
     }
 
     void LateUpdate()

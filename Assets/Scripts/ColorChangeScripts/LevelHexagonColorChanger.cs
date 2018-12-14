@@ -15,12 +15,13 @@ public class LevelHexagonColorChanger : ColorChanger {
         normalColor = new Color[this.transform.childCount];
         bulletProofColor = new Color[this.transform.childCount];
 
-        Color nColor = new Color32(0, 106, 100, 255);
+		Color nColor = DataScript.levelModeHexogenColor;
         bpColor = new Color32(67, 102, 117, 255);
 
         foreach (Renderer m in this.transform.GetComponentsInChildren<Renderer>())
         {
             childs[i] = m.gameObject;
+			childs[i].GetComponent<Renderer>().material.SetColor("_Color", DataScript.levelModeHexogenColor);
             normalColor[i] = nColor;
 			bulletProofColor[i] = bpColor;
             i++;

@@ -17,6 +17,7 @@ public class HexagonColorChanger : ColorChanger {
         foreach (Renderer m in this.transform.GetComponentsInChildren<Renderer>())
         {
             childs[i] = m.gameObject;
+			childs[i].GetComponent<Renderer>().material.SetColor("_Color",DataScript.levelModeHexogenColor);
             normalColor[i] = childs[i].GetComponent<Renderer>().material.GetColor("_Color");
 			bulletProofColor[i] = bulletProofColor1;
             i++;
