@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
 
     private Vector3 rayVector;//shooted rays direction
     private UIScript uIScript;
+	private BulletsParentScript BPS;
 
     public static Player instance;
 
@@ -59,7 +60,7 @@ public class Player : MonoBehaviour
 
     public Color HittableBlockColor;
 
-    private StrikeParticleScript strikeParticleScript;
+    //private StrikeParticleScript strikeParticleScript;
 
     public CameraShake cameraShake;
 
@@ -124,6 +125,8 @@ public class Player : MonoBehaviour
         coinLayerIndex = LayerMask.NameToLayer("coin");
         edgeLayerIndex = LayerMask.NameToLayer("edge");
         uIScript = FindObjectOfType(typeof(UIScript)) as UIScript;
+		BPS = FindObjectOfType(typeof(BulletsParentScript)) as BulletsParentScript;
+		BPS.gameObject.SetActive (false);
 
         mode = (int)Mode.normal;
         normalSpeed = speed.z;
@@ -158,7 +161,7 @@ public class Player : MonoBehaviour
 
         HittableBlockColor = Color.white;
 
-        strikeParticleScript = FindObjectOfType(typeof(StrikeParticleScript)) as StrikeParticleScript;
+        //strikeParticleScript = FindObjectOfType(typeof(StrikeParticleScript)) as StrikeParticleScript;
 
         cameraShake = FindObjectOfType(typeof(CameraShake)) as CameraShake;
 
@@ -329,7 +332,7 @@ public class Player : MonoBehaviour
 
         uIScript.PlayHitSound();
 
-        strikeParticleScript.setStrikePSPos(col.contacts[0].point);
+        //strikeParticleScript.setStrikePSPos(col.contacts[0].point);
 
         // ______________ *********** Strike Calc ************** _____________
 
@@ -437,6 +440,8 @@ public class Player : MonoBehaviour
         GameConst.instance.gatheredPower = 0;
         pointIndex += 1;
         strikeConstant += 1;
+		uIScript.energySlider.gameObject.SetActive (false);
+		BPS.gameObject.SetActive (true);
         //RayCalculator(modeSpeedIncrease);
     }
 
@@ -450,6 +455,8 @@ public class Player : MonoBehaviour
         strikeConstant = 0;
         pointIndex = 1;
         bulletHits = 0;
+		uIScript.energySlider.gameObject.SetActive (true);
+		BPS.gameObject.SetActive (false);
 
         //RayCalculator(modeSpeedIncrease);
     }
@@ -457,11 +464,12 @@ public class Player : MonoBehaviour
     public void BulletImpactOutput(float amount, float time)
     {
         this.energyTot -= bulletImpactEnergyLost;
-       if (isVibrationOn)
-       {    
-           VibrationPop.vibrateforDuration(2);
-       }      
-       cameraShake.ShakeCamera(amount, time);
+        cameraShake.ShakeCamera(amount, time);
+		BPS.hitInBulletproofMode (bulletHits);
+		if (isVibrationOn)
+		{    
+			VibrationPop.vibrateforDuration(2);
+		}      
     }
 
     IEnumerator goUp()

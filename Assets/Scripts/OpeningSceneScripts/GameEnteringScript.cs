@@ -14,7 +14,7 @@ public class GameEnteringScript : MonoBehaviour {
 
 		if (DataScript.isGameModeEndless != 1) {
 			DataScript.isGameModeEndless = 0;
-			float randFlt = (PlayerPrefs.GetInt("PlayerLevel") == 1) ? 0 : Random.Range (0.01f, 0.65f);
+			float randFlt = (PlayerPrefs.GetInt("PlayerLevel") == 1) ? 0 : Random.Range (0.01f, 1f);
 			DataScript.levelModeBlockColor = HueChanger.hueChanger (blockMaterial.GetColor ("_Color"), randFlt);
 			DataScript.levelModeHexogenColor = HueChanger.hueChanger (hexogenMaterial.GetColor ("_Color"), randFlt);
 		}

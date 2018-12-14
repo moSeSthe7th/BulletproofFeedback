@@ -14,9 +14,10 @@ public class LevelProgressSlider : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
 		//if(DataScript.)
 		levelProgressSlider = gameObject.GetComponent<Slider> ();	
+
+		levelProgressSlider.GetComponentInChildren<Image> ().color = DataScript.levelModeBlockColor;
 
 		Debug.Log ("blocklenggggg; " + GameConst.instance.blocks.Length);
 		blockCount = GameConst.instance.blocks.Length;

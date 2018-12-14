@@ -9,6 +9,7 @@ public class Fader : MonoBehaviour {
 	public float speed = 1.0f;
 	private float time = 0f;
 	private Color textColor;
+	public float changeAmount;
 
 	// Use this for initialization
 	void Start () {
@@ -19,7 +20,7 @@ public class Fader : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		time += Time.deltaTime * speed;
-		textColor.a = Mathf.PingPong (time, 0.5f);
+		textColor.a = Mathf.PingPong (time, changeAmount);
 		texttoFade.color = textColor;
 
 	}

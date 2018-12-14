@@ -17,7 +17,7 @@ public class ModeChangerButton : MonoBehaviour {
 
 	public void changeModeText(Text modeText){
 		if (DataScript.isGameModeEndless == 1) {
-			float randFlt = Random.Range (0.01f, 0.65f);
+			float randFlt = Random.Range (0.01f, 1f);
 			DataScript.isGameModeEndless = 0;
 			highScoreText.text = PlayerPrefs.GetInt ("LevelHighScore", 0).ToString ();
 			//PlayerPrefs.SetInt ("gameMode", 0);

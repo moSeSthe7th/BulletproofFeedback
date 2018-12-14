@@ -57,9 +57,9 @@ public class BulletScript : MonoBehaviour
             }
             else if (Player.instance.mode == (int)Player.Mode.bulletProof)
             {
-                this.gameObject.SetActive(false);
-                Player.instance.bulletHits += 1;
+				this.gameObject.SetActive (false);
                 Player.instance.BulletImpactOutput(3f, 1.5f);
+				Player.instance.bulletHits += 1;
             }
         }
     }

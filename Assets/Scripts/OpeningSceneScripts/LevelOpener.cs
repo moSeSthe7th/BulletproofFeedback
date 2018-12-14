@@ -24,6 +24,16 @@ public class LevelOpener : MonoBehaviour {
 		//bu kısım icerideki butonların her birine verilecek.
 		/*PlayerPrefs.SetInt ("PlayerLevel", 2);
 		playGameScript.setPlayButtonText ();*/
+		if (enteringScroll.gameObject.activeInHierarchy) {
+			levelClose ();
+		} else {
+		
+			levelOpen ();
+		}
+
+	}
+
+	public void levelOpen(){
 		modeInfoText.gameObject.SetActive (false);
 		modeChangerButton.gameObject.SetActive (false);
 		enteringScroll.gameObject.SetActive (true);

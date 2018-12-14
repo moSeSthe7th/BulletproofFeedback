@@ -197,9 +197,9 @@ public class GameConst : MonoBehaviour
 
 
 		///////////////////////////////////////////////////reklerrrr////////////////////////////////////////////////////////////////
-		float randFlt = Random.Range (0.01f, 0.65f);
+		float randFlt = Random.Range (0.01f, 1f);
 		DataScript.levelModeBlockColor = HueChanger.hueChanger (DataScript.levelModeBlockColor, randFlt);//Random.Range (0f,1f));
-		DataScript.levelModeHexogenColor = HueChanger.hueChanger (DataScript.levelModeBlockColor, randFlt);//Random.Range (0f,1f));
+		DataScript.levelModeHexogenColor = HueChanger.hueChanger (DataScript.levelModeHexogenColor, randFlt);//Random.Range (0f,1f));
 		///////////////////////////////////////////////////reklerrrr//////////////////////////////////////////////////////////////
 
         playerLock = true;

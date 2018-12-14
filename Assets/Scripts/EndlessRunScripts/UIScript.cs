@@ -129,7 +129,7 @@ public class UIScript : MonoBehaviour
         else
         {
             float timer = Time.realtimeSinceStartup;
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
             secondChance.gameObject.SetActive(true);
             advertiseTimer.gameObject.SetActive(true);
             bool didClosed = false;
@@ -175,6 +175,10 @@ public class UIScript : MonoBehaviour
 
     public void NextLevel()
     {
+		if (GameConst.instance.points > highScore) {
+			PlayerPrefs.SetInt ("LevelHighScore", GameConst.instance.points);
+			highScore = GameConst.instance.points;
+		}
         NextLevelPanel.SetActive(true);
     }
 
@@ -185,7 +189,7 @@ public class UIScript : MonoBehaviour
 
         secondChance.gameObject.SetActive(false);
 
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
 
         if (DataScript.isGameModeEndless == 0)
         {

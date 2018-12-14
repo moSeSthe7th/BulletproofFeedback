@@ -57,7 +57,7 @@ public class TutPlayer : MonoBehaviour
 
     public Color HittableBlockColor;
 
-    private StrikeParticleScript strikeParticleScript;
+    //private StrikeParticleScript strikeParticleScript;
 
     public CameraShake cameraShake;
 
@@ -152,7 +152,7 @@ public class TutPlayer : MonoBehaviour
 
         HittableBlockColor = Color.white;
 
-        strikeParticleScript = FindObjectOfType(typeof(StrikeParticleScript)) as StrikeParticleScript;
+        //strikeParticleScript = FindObjectOfType(typeof(StrikeParticleScript)) as StrikeParticleScript;
 
         height = this.transform.position.y;
 
@@ -258,7 +258,7 @@ public class TutPlayer : MonoBehaviour
             VibrationPop.vibrateforDuration(1);
         }
 
-        strikeParticleScript.setStrikePSPos(col.contacts[0].point);
+        //strikeParticleScript.setStrikePSPos(col.contacts[0].point);
 
         // ______________ *********** Strike Calc ************** _____________
 

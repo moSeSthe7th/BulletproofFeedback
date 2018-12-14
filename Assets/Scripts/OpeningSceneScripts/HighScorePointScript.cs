@@ -7,7 +7,12 @@ public class HighScorePointScript : MonoBehaviour {
 	public Text highScore;
 
 	void Start () {
-		highScore.text = PlayerPrefs.GetInt("LevelHighScore",0).ToString() ;
+		//PlayerPrefs.SetInt ("LevelHighScore", 0);
+		if (DataScript.isGameModeEndless == 1) {
+			highScore.text = PlayerPrefs.GetInt ("highScore", 0).ToString ();
+		} else {
+			highScore.text = PlayerPrefs.GetInt ("LevelHighScore", 0).ToString ();
+		}
 	}
 	
 
