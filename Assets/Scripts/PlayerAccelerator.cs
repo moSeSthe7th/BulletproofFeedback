@@ -30,13 +30,18 @@ public static class PlayerAccelerator{
 
     public static float GetPlayerNormalSpeed(float playerInitSpeed)
     {
-       if(GameConst.Level == 1)
+        if(GameConst.instance.gameMode == 0)
         {
-            return playerInitSpeed;
+            float coefficient = (GameConst.Level != 1) ? (float)(GameConst.Level - 1) / 17 : 0;
+            return playerInitSpeed + (int)(35 * (1 - Mathf.Exp(-(coefficient))));
+        }
+        else if(GameConst.instance.gameMode == 1)
+        {
+            return playerInitSpeed + ((GameConst.Level - 1) * LevelDesigner.speedUp(0));
         }
         else
         {
-            return playerInitSpeed + ((GameConst.Level - 1) * LevelDesigner.speedUp(0));
+            return playerInitSpeed; 
         }
     }
 }

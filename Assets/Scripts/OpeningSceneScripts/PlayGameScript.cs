@@ -34,15 +34,6 @@ public class PlayGameScript : MonoBehaviour {
         {
             SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
         }
-
-       /* if(!PlayerPrefs.HasKey("PlayedTime")){
-            PlayerPrefs.SetInt("PlayedTime", 0);
-            SceneManager.LoadScene("TutorialScene",LoadSceneMode.Single);
-        }
-        else{
-            Debug.Log("burda");
-            SceneManager.LoadScene("SampleScene",LoadSceneMode.Single);
-        }*/
     }
 
 	public void setPlayButtonText(){

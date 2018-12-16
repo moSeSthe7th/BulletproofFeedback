@@ -20,7 +20,7 @@ public class TextureChanger : MonoBehaviour {
 	}
 
 	public void changeTexture(){
-		Debug.Log ("texture changed");
+		//Debug.Log ("texture changed");
 		m_Renderer = GetComponent<Renderer> ();
 		m_Renderer.sharedMaterial.SetTexture ("_MainTex", DataScript.ballTexture);
 		DataScript.isBallTextureChanged = false;

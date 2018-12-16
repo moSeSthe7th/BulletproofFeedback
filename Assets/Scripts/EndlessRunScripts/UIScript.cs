@@ -38,8 +38,6 @@ public class UIScript : MonoBehaviour
 
     private AudioSource audioSource;
 
-    public Color normalGunColor;
-
     private AdsService ads;
 
     public Text gainedPoints;
@@ -122,49 +120,96 @@ public class UIScript : MonoBehaviour
         yield return new WaitForSecondsRealtime(.1f);
         Player.instance.gameObject.GetComponent<MeshRenderer>().enabled = false;
         yield return new WaitForSecondsRealtime(.65f);
-        if (GameConst.instance.secondPushed || (GameConst.instance.gameTime < 15f || GameConst.instance.points < (PlayerPrefs.GetInt("highScore", highScore) / 10f)))
+
+        //---Eğer koşulları sağlamıyorsa game overa gir ve çık burdan // hiç reklam izleyemesin yıkık herifler
+        if(GameConst.instance.gameMode == 0)
+        {
+            float blockCount = GameConst.instance.blocks.Length;
+            float blockDistance = GameConst.instance.BlockDistUpdate;
+            float totalDistance = blockCount * blockDistance;
+            float playerPos = Player.instance.transform.position.z - GameConst.instance.blocks[0].transform.position.z;
+
+            if(playerPos < totalDistance / 2 || DataScript.isSecondChanceButtonPushedForLevel || DataScript.isPassedAtLeastOneLevel)
+            {
+                GameOver();
+                yield break;
+            }
+        }
+        else if(GameConst.instance.gameMode == 1)
+        {
+            if (GameConst.instance.secondPushed || (GameConst.instance.gameTime < 15f || GameConst.instance.points < (PlayerPrefs.GetInt("highScore", highScore) / 10f)))
+            {
+                GameOver();
+                yield break;
+            }
+        }
+
+      /*  if(GameConst.instance.secondPushed)
+        {
+            if (GameConst.instance.gameMode == 0)
+            {
+                float blockCount = GameConst.instance.blocks.Length;
+                float blockDistance = GameConst.instance.BlockDistUpdate;
+                float totalDistance = blockCount * blockDistance;
+                float playerPos = Player.instance.transform.position.z - GameConst.instance.blocks[0].transform.position.z;
+                if(playerPos < totalDistance / 2 || DataScript.isSessionEnded)
+                {
+                    GameOver();
+                    yield break;
+                }
+            }
+            else if (GameConst.instance.gameMode == 1)
+            {
+                if((GameConst.instance.gameTime < 15f || GameConst.instance.points < (PlayerPrefs.GetInt("highScore", highScore) / 10f)))
+                {
+                    GameOver();
+                    yield break;
+                }
+            }
+        }*/
+       /* if (GameConst.instance.secondPushed || (GameConst.instance.gameTime < 15f || GameConst.instance.points < (PlayerPrefs.GetInt("highScore", highScore) / 10f)))
         {
             GameOver();
         }
         else
+        {*/
+        float timer = Time.realtimeSinceStartup;
+        //Time.timeScale = 0;
+        secondChance.gameObject.SetActive(true);
+        advertiseTimer.gameObject.SetActive(true);
+        bool didClosed = false;
+        while (timer + 5 > Time.realtimeSinceStartup)
         {
-            float timer = Time.realtimeSinceStartup;
-            //Time.timeScale = 0;
-            secondChance.gameObject.SetActive(true);
-            advertiseTimer.gameObject.SetActive(true);
-            bool didClosed = false;
-            while (timer + 5 > Time.realtimeSinceStartup)
+            if (!didClosed && timer + .7f < Time.realtimeSinceStartup && !GameConst.instance.secondPushed)
             {
-                if (!didClosed && timer + .7f < Time.realtimeSinceStartup && !GameConst.instance.secondPushed)
+                didClosed = true;
+                skip.gameObject.SetActive(true);
+                skipButton.gameObject.SetActive(true);
+                while (skip.color.a < 1)
                 {
-                    didClosed = true;
-                    skip.gameObject.SetActive(true);
-                    skipButton.gameObject.SetActive(true);
-                    while (skip.color.a < 1)
-                    {
-                        skip.color = new Color(skip.color.r, skip.color.g, skip.color.b, skip.color.a + 0.50f);
-                        yield return new WaitForSecondsRealtime(.05f);
-                    }
+                    skip.color = new Color(skip.color.r, skip.color.g, skip.color.b, skip.color.a + 0.50f);
+                    yield return new WaitForSecondsRealtime(.05f);
                 }
-                if (skipPressed && skipButton.gameObject.activeInHierarchy && !GameConst.instance.secondPushed)
-                {
-                    DestroyAdCanvas();
-                    yield return new WaitForSecondsRealtime(.2f);
-                    if (!GameConst.instance.secondPushed)
-                    {
-                        GameOver();
-                    }
-                    StopCoroutine(AdvertiseReward());
-                    yield break;
-                }
-                yield return null;
             }
-            DestroyAdCanvas();
-            if (!GameConst.instance.secondPushed)
+            if (skipPressed && skipButton.gameObject.activeInHierarchy && !GameConst.instance.secondPushed)
             {
-                GameOver();
+                DestroyAdCanvas();
+                yield return new WaitForSecondsRealtime(.2f);
+                if (!GameConst.instance.secondPushed)
+                {
+                    GameOver();
+                }
+                StopCoroutine(AdvertiseReward());
+                yield break;
             }
+            yield return null;
         }
+        DestroyAdCanvas();
+        if (!GameConst.instance.secondPushed)
+        {
+            GameOver();
+        }    
+        //}
         StopCoroutine(AdvertiseReward());
     }
 
@@ -179,6 +224,12 @@ public class UIScript : MonoBehaviour
 			PlayerPrefs.SetInt ("LevelHighScore", GameConst.instance.points);
 			highScore = GameConst.instance.points;
 		}
+        if(Player.instance.mode == (int)Player.Mode.normal){
+            energySlider.gameObject.SetActive(false);
+        }
+        else{
+            Player.instance.BPS.gameObject.SetActive(false);
+        }
         NextLevelPanel.SetActive(true);
     }
 
@@ -195,6 +246,8 @@ public class UIScript : MonoBehaviour
         {
             DataScript.isSessionEnded = true;
             DataScript.pointHolder = 0;
+            DataScript.isSecondChanceButtonPushedForLevel = false;
+            DataScript.isPassedAtLeastOneLevel = false;
         }
 
         gameOverPanel.SetActive(true);

@@ -21,7 +21,7 @@ public class CoinsScript{
                 c.gameObject.SetActive(true);
             }
         }
-        if (GameConst.Level % 2 == 0)
+        if (GameConst.Level % 2 == 0 && GameConst.instance.gameMode == 1)
         {
             ObjectPooler.SharedInstance.GetPooledObject("Coin",Coins.transform);
         }

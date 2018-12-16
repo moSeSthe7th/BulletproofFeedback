@@ -16,21 +16,23 @@ public class ModeChangerButton : MonoBehaviour {
 	}
 
 	public void changeModeText(Text modeText){
+        
 		if (DataScript.isGameModeEndless == 1) {
-			float randFlt = Random.Range (0.01f, 1f);
+			//float randFlt = Random.Range (0.01f, 1f);
 			DataScript.isGameModeEndless = 0;
 			highScoreText.text = PlayerPrefs.GetInt ("LevelHighScore", 0).ToString ();
+            DataScript.ThemeIndex = (PlayerPrefs.GetInt("PlayerLevel") - 1) % DataScript.Themes.Count;
 			//PlayerPrefs.SetInt ("gameMode", 0);
-			DataScript.levelModeBlockColor = HueChanger.hueChanger (blockMaterial.GetColor ("_Color"), randFlt);
-			DataScript.levelModeHexogenColor = HueChanger.hueChanger (hexogenMaterial.GetColor ("_Color"), randFlt);
+			//DataScript.levelModeBlockColor = HueChanger.hueChanger (blockMaterial.GetColor ("_Color"), randFlt);
+			//DataScript.levelModeHexogenColor = HueChanger.hueChanger (hexogenMaterial.GetColor ("_Color"), randFlt);
 
 		} else {
 			//PlayerPrefs.SetInt ("gameMode", 1);
 			DataScript.isGameModeEndless = 1;
-			DataScript.levelModeBlockColor = blockMaterial.GetColor("_Color");
-			DataScript.levelModeHexogenColor = hexogenMaterial.GetColor ("_Color");
+			//DataScript.levelModeBlockColor = blockMaterial.GetColor("_Color");
+			//DataScript.levelModeHexogenColor = hexogenMaterial.GetColor ("_Color");
+            DataScript.ThemeIndex = 0;
 			highScoreText.text = PlayerPrefs.GetInt ("highScore", 0).ToString ();
-
 		}
 		playGameScript.setPlayButtonText ();
 	}

@@ -5,28 +5,33 @@ using UnityEngine.UI;
 
 public class BulletsParentScript : MonoBehaviour {
 
-	//public Image bullet1;
-	//public Image bullet2;
-	//public Image bullet3;
 	private Image[] bullets;
 
-	// Use this for initialization
-	void Start () {
+    private void OnEnable()
+    {
+        foreach(CanvasRenderer t in GetComponentsInChildren<CanvasRenderer>())
+        {
+            t.GetComponent<Image>().enabled = true;
+            t.GetComponent<Image>().color = new Color32(255,255,255,200);
+        }
+    }
 
-		bullets = gameObject.GetComponentsInChildren<Image> ();
-		Debug.Log ("buletlenggggtttttthhhhhh" + bullets.Length);
-	/*	for (int i = 0; i < transform.childCount; i++) {
-			bullets [i].gameObject.SetActive (true);
-		}*/
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+    void Start () 
+    {
+        bullets = gameObject.GetComponentsInChildren<Image>();
 	}
 
-	public void hitInBulletproofMode(int bulletNo){
-		bullets [bulletNo].gameObject.SetActive (false);
+    private void LateUpdate()
+    {
+        if(Player.instance.bulletHits >= 2)
+        {  
+            float t = Mathf.PingPong(Time.time * 2, 1);
+            bullets[2].color = Color.Lerp(Color.white, Color.red, t);
+        }
+    }
+
+    public void hitInBulletproofMode(int bulletNo)
+    {
+        bullets[bulletNo].enabled = false;//gameObject.SetActive (false);
 	}
 }

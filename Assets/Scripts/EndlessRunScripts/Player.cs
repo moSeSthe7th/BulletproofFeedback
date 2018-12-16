@@ -35,7 +35,8 @@ public class Player : MonoBehaviour
 
     private Vector3 rayVector;//shooted rays direction
     private UIScript uIScript;
-	private BulletsParentScript BPS;
+
+    public BulletsParentScript BPS;
 
     public static Player instance;
 
@@ -96,17 +97,17 @@ public class Player : MonoBehaviour
     {
         if (instance == null)
         {
-            Debug.Log("Player created1");
+            //Debug.Log("Player created1");
             instance = this;
         }
         else
         {
-            Debug.LogError("New player destroyed");
+            //Debug.LogError("New player destroyed");
             Destroy(this.gameObject);
         }
         initialSpeed = 85f;
-
         speed = new Vector3(0f, 0f, PlayerAccelerator.GetPlayerNormalSpeed(initialSpeed));
+        Debug.LogWarning("Player speed is : " + speed.z);
         mode = (int)Mode.normal;
     }
 
@@ -154,10 +155,10 @@ public class Player : MonoBehaviour
 
         lastPassedBlock = -1;
 
-        energyTot = (GameConst.instance.energyTime) / 3;
+        energyTot = (GameConst.instance.energyTime) / 3f;
         energyDecreaseRate = 10f; // for default
-        gainedEnergy = (GameConst.instance.energyTime - energyTot) / 5;
-        bulletImpactEnergyLost = (GameConst.instance.energyTime - energyTot) / 3;
+        gainedEnergy = (GameConst.instance.energyTime - energyTot) / 5f;
+        bulletImpactEnergyLost = (GameConst.instance.energyTime - energyTot) / 3f;
 
         HittableBlockColor = Color.white;
 
@@ -170,7 +171,6 @@ public class Player : MonoBehaviour
         height = this.transform.position.y;
 
         pointIndex = 1;
-
         //enteredCollision = false;
     }
 
@@ -208,7 +208,7 @@ public class Player : MonoBehaviour
 
             // Energy Düsürme ve 0 sa bölüm sonlandırma ________________
 
-            if (energyTot <= GameConst.instance.energyTime / 3 && GameConst.instance.isLevel && strike <= 0)
+            if (energyTot <= GameConst.instance.energyTime / 3f && GameConst.instance.isLevel && strike <= 0)
             {
                 energyTot -= Time.deltaTime * energyDecreaseRate;
             }
@@ -237,7 +237,6 @@ public class Player : MonoBehaviour
                 }
             }
 
-
             //____________________________ Passed Block Calculation && Calculation of if not collided end bulletmode ______________________//
 
             if (lastPassedBlock <= GameConst.instance.blockNumber - 1 && GameConst.instance.blocks[lastPassedBlock + 1].transform.position.z + 15f <= this.transform.position.z && GameConst.instance.isLevel)
@@ -248,7 +247,7 @@ public class Player : MonoBehaviour
                 {
                     if(strike > 0)
                     {
-                        energyTot = GameConst.instance.energyTime / 3;
+                        energyTot = GameConst.instance.energyTime / 3f;
                         strike = 0;
                     }
 
@@ -312,9 +311,9 @@ public class Player : MonoBehaviour
 
     private void SetEnergy()
     {
-        if(energyTot <= GameConst.instance.energyTime / 3)
+        if(energyTot <= GameConst.instance.energyTime / 3f)
         {
-            energyTot = (GameConst.instance.energyTime / 3) + gainedEnergy;
+            energyTot = (GameConst.instance.energyTime / 3f) + gainedEnergy;
         }
         else
         {
@@ -450,7 +449,7 @@ public class Player : MonoBehaviour
         isOnStrike = false;
         normalSpeed = PlayerAccelerator.GetPlayerNormalSpeed(initialSpeed);
         mode = (int)Mode.normal;
-        energyTot = GameConst.instance.energyTime / 3;
+        energyTot = GameConst.instance.energyTime / 3f;
         strike = 0;
         strikeConstant = 0;
         pointIndex = 1;
@@ -465,7 +464,7 @@ public class Player : MonoBehaviour
     {
         this.energyTot -= bulletImpactEnergyLost;
         cameraShake.ShakeCamera(amount, time);
-		BPS.hitInBulletproofMode (bulletHits);
+		BPS.hitInBulletproofMode(bulletHits);
 		if (isVibrationOn)
 		{    
 			VibrationPop.vibrateforDuration(2);

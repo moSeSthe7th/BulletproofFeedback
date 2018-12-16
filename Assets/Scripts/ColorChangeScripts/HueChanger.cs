@@ -16,7 +16,7 @@ public class HueChanger {
 		else*/
 		H = H + hueIncrease;
 		H = H % 0.65f;
-		Debug.Log ("Hue = " + H);
+		//Debug.Log ("Hue = " + H);
 		return Color.HSVToRGB (H, S, V);
 	}
 }
@@ -24,6 +24,7 @@ public class HueChanger {
 
 //güzel duran renkler 
 //006A64 	orjinal renk
+
 //DB6F66	turuncu
 //DB8D66	turuncu
 //3E6380	mavi

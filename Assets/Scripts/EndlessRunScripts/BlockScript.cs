@@ -76,12 +76,18 @@ public class BlockScript : Rotatable
     {
         if(GameConst.instance.gameMode == 0)
         {
-            if (GameConst.Level >= 5)
+            if (GameConst.Level > 4)
             {
                 //shiftProbability = (GameConst.Level * GameConst.Level) / (int)(GameConst.Level / 3.5f);
-                shiftProbability = (20f) / (5f/(float)GameConst.Level); //basicly start with 20 and increase 4 by 4 each level
-                if (shiftProbability > 70)
-                    shiftProbability = 70;
+               // shiftProbability = (20f) / (5f/(float)GameConst.Level); //basicly start with 20 and increase 4 by 4 each level
+                float coefficient = (float)(GameConst.Level - 4) / 10;
+                shiftProbability = 20 + (int)(40 * (1 - Mathf.Exp(-(coefficient))));
+                if (shiftProbability > 60)
+                    shiftProbability = 60;
+            }
+            else if(GameConst.Level == 4)
+            {
+                shiftProbability = 20f;
             }
             else
             {
@@ -95,14 +101,14 @@ public class BlockScript : Rotatable
                 shiftProbability += 7;
             }
         }
-        Debug.Log(shiftProbability);
+        //Debug.Log(shiftProbability);
     }
 
     public void Shift()
     {
         shiftDecider = Random.Range(0, 100);
-        Debug.Log(shiftDecider + " " + shiftProbability);
-        if (shiftDecider <= shiftProbability)
+       
+        if (shiftDecider < shiftProbability)
         {
             willShift = true;
         }
@@ -110,7 +116,7 @@ public class BlockScript : Rotatable
         {
             willShift = false;
         }
-
+        //Debug.Log("shift decider is : " + shiftDecider + " shift probality is : " + shiftProbability + " will shift ? :" + willShift);
         if(this.willShift && this.gameObject.activeInHierarchy)
         {
             willShift = false;

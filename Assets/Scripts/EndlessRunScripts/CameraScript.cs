@@ -19,7 +19,7 @@ public class CameraScript : MonoBehaviour
     private float t;
     private bool isChanged;
 
-    public Material normalModeBackground;
+    private Material normalModeBackground;
     public Material bulletProofModeBackground;
 
     private Color32 fogColorNormal;
@@ -38,9 +38,11 @@ public class CameraScript : MonoBehaviour
         //mainCamera.backgroundColor = lightColor;
         mainCamera.fieldOfView = 60;
         mainCamera.farClipPlane = 450f;
-        RenderSettings.skybox = normalModeBackground;
+        normalModeBackground = DataScript.Themes[DataScript.ThemeIndex].BackGround;
 
-        fogColorNormal = new Color32(180, 205, 200, 255);
+        RenderSettings.skybox = normalModeBackground; 
+
+        fogColorNormal = DataScript.Themes[DataScript.ThemeIndex].fogColor;
         fogColorBulletProofMode = new Color32(61, 61, 61, 255);
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Linear;

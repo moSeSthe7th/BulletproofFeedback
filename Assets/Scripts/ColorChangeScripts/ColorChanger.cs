@@ -10,7 +10,7 @@ public class ColorChanger : MonoBehaviour {
     public Color[] bulletProofColor;
 
 
-    private void Start()
+    private void Awake()
     {
         isChanged = false;
         tilt = 0;

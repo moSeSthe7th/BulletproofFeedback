@@ -42,7 +42,7 @@ public class InputManager : MonoBehaviour
 	public direction directionGetter()
 	{
 		direction dir = direction.none;
-		#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+		//#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 		if (Input.touchCount > 0) 
 		{
 			Touch playerFinger = Input.GetTouch(0);
@@ -86,7 +86,7 @@ public class InputManager : MonoBehaviour
 			}
 			return dir;
 		}
-		#elif UNITY_STANDALONE || UNITY_WEBPLAYER
+		//#elif UNITY_STANDALONE || UNITY_WEBPLAYER
 		if (Input.GetKeyDown("right"))
 		{
 			dir = direction.right;
@@ -106,7 +106,7 @@ public class InputManager : MonoBehaviour
 		{
 			dir = direction.none;
 		}
-		#endif
+		//#endif
 		
 		return dir;
 

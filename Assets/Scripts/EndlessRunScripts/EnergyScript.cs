@@ -11,6 +11,8 @@ public class EnergyScript : MonoBehaviour {
 	private Color red;
     private Color green;
 	private Color purple;
+
+    private float counter;
 	private float t; // to change color between 0 and 1, 0 means purple 1 means red
 	private bool onAlarm;
 
@@ -32,6 +34,7 @@ public class EnergyScript : MonoBehaviour {
 		purple = energyImage.color;
 		onAlarm = false;
 		t = 0;
+        counter = 0;
 	}
 
 	void Update () 
@@ -42,18 +45,20 @@ public class EnergyScript : MonoBehaviour {
 			{
 				energySlider.value = Player.instance.energyTot;
 			}
-            if (Player.instance.energyTot <= (GameConst.instance.energyTime / 3f) + 10f)
+            if (Player.instance.energyTot <= (GameConst.instance.energyTime / 3f) + 20f)
 			{
-				t = Mathf.PingPong(Time.time, 1);
+                if (onAlarm == false)
+                {
+                    onAlarm = true;
+                    counter = 0;
+                }
+                counter += Time.deltaTime * 2;
+                t = Mathf.PingPong(counter, 1);
                 energyImage.color = Color.Lerp(purple, red, t);
-				if (onAlarm == false)
-				{
-					onAlarm = true;
-				}
 			}
-            else { 
-                energyImage.color = Color.Lerp(purple, green, Player.instance.energyTot / (GameConst.instance.energyTime * 2));
-            }
+           /* else { 
+                //energyImage.color = Color.Lerp(purple, green, Player.instance.energyTot / (GameConst.instance.energyTime * 2));
+            }*/
 			if (Player.instance.energyTot > GameConst.instance.energyTime / 4f && onAlarm)
 			{
                 energyImage.color = purple;

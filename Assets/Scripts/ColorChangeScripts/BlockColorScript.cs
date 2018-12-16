@@ -9,16 +9,10 @@ public class BlockColorScript : MonoBehaviour {
 	public float changeAmount;
 	public float waitTimer;
 
-	// Use this for initialization
 	void Start () {
 		blockMat = gameObject.GetComponent<Renderer> ().sharedMaterial;
 		blockColor = blockMat.color;
 		StartCoroutine (WaitAndChangeColor (changeAmount, waitTimer));
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
 	private Color hueChanger(Color colortoChange, float hueIncrease){

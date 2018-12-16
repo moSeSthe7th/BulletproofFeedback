@@ -50,6 +50,7 @@ public class AdsService : MonoBehaviour
         else 
         {
             GameConst.instance.secondPushed = false;
+            DataScript.isSecondChanceButtonPushedForLevel = false;
             uIScript.GameOver();
         }
         StopCoroutine(RewardAd());
@@ -63,6 +64,7 @@ public class AdsService : MonoBehaviour
 	{
 		Debug.Log("tusa bastım");
 		GameConst.instance.secondPushed = true;
+        DataScript.isSecondChanceButtonPushedForLevel = true;
         uIScript.DestroyAdCanvas();
         StartCoroutine(RewardAd());
 	}

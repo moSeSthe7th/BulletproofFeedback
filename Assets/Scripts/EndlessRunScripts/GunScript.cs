@@ -58,7 +58,16 @@ public class GunScript : MonoBehaviour
     public void StartGun()
     {
         isShooting = true;
-        shootLoop = StartCoroutine(ShooterLoop());
+        if(GameConst.instance.gameMode == 0)
+        {
+            Debug.Log("Level Gun Started");
+            shootLoop = StartCoroutine(Level_ShooterLoop());
+        }
+        else if(GameConst.instance.gameMode == 1)
+        {
+            Debug.Log("Normal Gun started");
+            shootLoop = StartCoroutine(ShooterLoop());
+        }
     }
 
     public void StopGun()
@@ -69,6 +78,76 @@ public class GunScript : MonoBehaviour
         //uiScript.materialChangetoWhite(barrelSelector(0));
         //uiScript.materialChangetoWhite(barrelSelector(10));
     }
+
+
+    private IEnumerator Level_ShooterLoop()
+    {
+        //bullet hızı ayarla sadece !!!!!!!!!!!!!!!
+        //********************
+        while (GameConst.instance.isGameOn)//(GameConst.instance.isGameOn)
+        {
+            if (blockNumb <= GameConst.instance.blockNumber && this.gameObject.transform.position.z > GameConst.instance.blocks[0].gameObject.transform.position.z && this.gameObject.transform.position.z < GameConst.instance.LastPosOfArray + GameConst.instance.BlockDistUpdate)
+            {
+                bulletPos = RandomPos.RandomPosition(bulletPos, 2);
+                //float barrelPos = bulletPositionSelector[bulletPos];
+                //float rand = Random.Range(minRand, maxRand);
+                //uiScript.materialChangetoRed(barrelSelector(barrelPos));
+                yield return new WaitUntil(() => this.gameObject.transform.position.z >= GameConst.instance.blocks[blockNumb].gameObject.transform.position.z + GameConst.instance.BlockDistUpdate);// shootInterval); //+ GameConst.instance.BlockDistUpdate);
+                //Debug.Log("Sıktım benim konum : " + this.transform.position.z + "Baktıgım blok konumu " + GameConst.instance.blocks[blockNumb].gameObject.transform.position.z );
+
+                float spd = (GameConst.Level <= 4) ? (Random.Range(0, 3) > 1) ? bulletSpeedOnTop : bulletSpeedOnMiddle : (Random.Range(0, 2) == 0) ? bulletSpeedOnMiddle : bulletSpeedOnTop;
+                Vector3 bulletPosition = new Vector3(PlatformTurnScript.instance.CoinAndBulletPos[bulletPos].x, PlatformTurnScript.instance.CoinAndBulletPos[bulletPos].y, this.transform.position.z);
+
+                if (blockNumb < GameConst.instance.blockNumber)
+                {
+                    bulletOnTheWay(bulletPosition, PlatformTurnScript.instance.BulletRot[bulletPos], (totBulletSended != 0) ? -1 * spd * Player.instance.speed.z : -1 * spd * PlayerAccelerator.GetPlayerNormalSpeed(Player.instance.initialSpeed));
+                    totBulletSended += 1;
+                    blockNumb += 1;
+                }
+                else if (blockNumb == GameConst.instance.blockNumber && Mathf.Approximately(spd, bulletSpeedOnTop))
+                {
+                    bulletOnTheWay(bulletPosition, PlatformTurnScript.instance.BulletRot[bulletPos], -1 * spd * Player.instance.speed.z);
+                    totBulletSended += 1;
+                    blockNumb += 1;
+                }
+
+                if(GameConst.Level > 11 && blockNumb < GameConst.instance.blockNumber){
+                    float coefficient = (float)(GameConst.Level - 10) / 10;
+                    //Debug.LogError(GameConst.Level + "coef is : " + coefficient);
+                    float secondBulletProbability = 15 + (int)(20 * (1 - Mathf.Exp(-(coefficient))));
+                    float secondBulletDecider = Random.Range(0, 100);
+
+                    if (secondBulletProbability > secondBulletDecider)
+                    {
+                        //Debug.LogError("İkinci mermiyi attık. ikince mermi gelme olasılığı " + secondBulletProbability + " bundan büyük olmuş " + secondBulletDecider );
+                        yield return new WaitForSeconds(0.5f);
+                        bulletPos = RandomPos.RandomPosition(bulletPos, 2);
+                        Vector3 SecondbulletPosition = new Vector3(PlatformTurnScript.instance.CoinAndBulletPos[bulletPos].x, PlatformTurnScript.instance.CoinAndBulletPos[bulletPos].y, this.transform.position.z);
+                        float secondSpd = (Mathf.Approximately(spd, bulletSpeedOnTop)) ? bulletSpeedOnMiddle : bulletSpeedOnTop;
+                        bulletOnTheWay(SecondbulletPosition, PlatformTurnScript.instance.BulletRot[bulletPos], -1 * secondSpd * Player.instance.speed.z);
+                        totBulletSended += 1;
+                    }
+
+                }
+
+                yield return new WaitForSecondsRealtime(0.5f);
+
+                if (Player.instance.mode == (int)Player.Mode.bulletProof && Random.Range(0, Player.instance.strikeConstant + 2) >= 2 && blockNumb < GameConst.instance.blockNumber)
+                {
+                    bulletPos = RandomPos.RandomPosition(bulletPos, 2);
+                    float Bspd = (GameConst.Level <= 4) ? (Random.Range(0, 3) > 1) ? bulletSpeedOnTop : bulletSpeedOnMiddle : (Random.Range(0, 2) == 0) ? bulletSpeedOnMiddle : bulletSpeedOnTop;
+                    Vector3 BbulletPosition = new Vector3(PlatformTurnScript.instance.CoinAndBulletPos[bulletPos].x, PlatformTurnScript.instance.CoinAndBulletPos[bulletPos].y, this.transform.position.z);
+
+                    bulletOnTheWay(BbulletPosition, PlatformTurnScript.instance.BulletRot[bulletPos], -1 * Bspd * Player.instance.speed.z);
+                    totBulletSended += 1;
+                }
+                //uiScript.materialChangetoWhite(barrelSelector(barrelPos));
+            }
+            yield return null;
+        }
+        StopGun();
+    }
+
 
     private IEnumerator ShooterLoop()
     {

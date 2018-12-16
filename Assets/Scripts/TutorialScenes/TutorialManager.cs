@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Facebook.Unity;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -271,7 +272,7 @@ public class TutorialManager : MonoBehaviour
         TutPlayer.instance.speed.z = 150f;
         collid = false;
         playerLock = true;
-
+		FB.LogAppEvent (AppEventName.CompletedTutorial);
         yield return new WaitForSeconds(2f);
         SceneManager.LoadSceneAsync("SampleScene", LoadSceneMode.Single);
         StopCoroutine(TutorialLoop());

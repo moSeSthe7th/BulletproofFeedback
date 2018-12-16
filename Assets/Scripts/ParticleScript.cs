@@ -44,8 +44,8 @@ public class ParticleScript : MonoBehaviour
 		purpleParticle = new Color32(165, 243, 255, 255);
 
 
-		whiteColor = new Color(255, 240, 120, 255);
-		greenParticle = new Color(255, 220, 0, 255);
+        whiteColor = Color.Lerp(DataScript.Themes[DataScript.ThemeIndex].BlockColor, Color.white, 0.7f);// DataScript.Themes[DataScript.ThemeIndex].HexagonColor;
+        greenParticle = Color.Lerp(DataScript.Themes[DataScript.ThemeIndex].HexagonColor, Color.white, 0.5f);
 
 
 		//****************************    GRADIENT PARTICLE SYSTEM ICIN     ************************

@@ -5,20 +5,15 @@ using UnityEngine.UI;
 
 public class LevelOpener : MonoBehaviour {
 	
-	private PlayGameScript playGameScript;
+	//private PlayGameScript playGameScript;
 	public Button modeChangerButton;
 	public Text modeInfoText;
 	public GameObject enteringScroll;
 
-	// Use this for initialization
-	void Start () {
+	/*void Start () {
 		playGameScript = FindObjectOfType (typeof(PlayGameScript)) as PlayGameScript;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	}*/
+
 
 	public void levelOpenerButton(){
 		//bu kısım icerideki butonların her birine verilecek.

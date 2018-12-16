@@ -15,14 +15,13 @@ public class LevelHexagonColorChanger : ColorChanger {
         normalColor = new Color[this.transform.childCount];
         bulletProofColor = new Color[this.transform.childCount];
 
-		Color nColor = DataScript.levelModeHexogenColor;
         bpColor = new Color32(67, 102, 117, 255);
 
         foreach (Renderer m in this.transform.GetComponentsInChildren<Renderer>())
         {
             childs[i] = m.gameObject;
-			childs[i].GetComponent<Renderer>().material.SetColor("_Color", DataScript.levelModeHexogenColor);
-            normalColor[i] = nColor;
+            childs[i].GetComponent<Renderer>().material.SetColor("_Color",DataScript.Themes[DataScript.ThemeIndex].HexagonColor);
+            normalColor[i] = childs[i].GetComponent<Renderer>().material.GetColor("_Color");
 			bulletProofColor[i] = bpColor;
             i++;
         }
@@ -30,6 +29,6 @@ public class LevelHexagonColorChanger : ColorChanger {
 
     void LateUpdate()
     {
-        isChanged = ChangeColor(2, childs, normalColor, bulletProofColor);
+        isChanged = ChangeColor(this.transform.childCount, childs, normalColor, bulletProofColor);
     }
 }

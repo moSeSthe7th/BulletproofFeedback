@@ -87,6 +87,7 @@ public class ObjectPooler : MonoBehaviour
         edge.amountToPool = 17;
         edge.objectToPool = Edge;
         edge.objectTag = Edge.tag;
+        GameConst.instance.Edges.Add(edge.objectToPool);
 
         hollow = new ObjectPoolItem();
 
@@ -169,7 +170,7 @@ public class ObjectPooler : MonoBehaviour
                     else if (item == edge)
                     {
                         GameConst.instance.Edges.Add(obj);
-                        distEdge = PlatformScript.SetPlatform(GameConst.instance.Edges[i], distEdge);
+                        distEdge = PlatformScript.SetPlatform(GameConst.instance.Edges[i + 1], distEdge);
                     }
                     else if (item == hollow)
                     {
@@ -252,7 +253,7 @@ public class ObjectPooler : MonoBehaviour
     }
 
 
-    //Creates objects until
+    //Creates objects until. Bu fonksiyon kırılan bloklar için kullanılıyor bir tek şu anda
     public void CreateObjects(string tag, Transform parent,int num)
     {
         foreach (ObjectPoolItem item in itemsToPool)

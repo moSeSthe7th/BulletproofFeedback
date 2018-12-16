@@ -7,6 +7,6 @@ public class SliderSecondLevel : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		gameObject.GetComponent<Text> ().text = (GameConst.Level + 1).ToString ();
+		gameObject.GetComponent<Text> ().text = (GameConst.Level).ToString ();
 	}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Facebook.Unity;
 public class GameConst : MonoBehaviour
 {
 
@@ -81,12 +81,12 @@ public class GameConst : MonoBehaviour
 
         if (instance == null)
         {
-            Debug.Log("game created");
+            //Debug.Log("game created");
             instance = this;
         }
         else
         {
-            Debug.LogError("New game destroyed");
+            //Debug.LogError("New game destroyed");
             Destroy(this.gameObject);
         }
 
@@ -107,17 +107,22 @@ public class GameConst : MonoBehaviour
 
         if (gameMode == 0)
         {
+            //PlayerPrefs.SetInt("PlayerLevel",30);
             Level = PlayerPrefs.GetInt("PlayerLevel");
-            //Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
+            DataScript.ThemeIndex = (Level - 1) % DataScript.Themes.Count;
+            Debug.LogWarning("Game mode is Level ");
         }
         else if (gameMode == 1)
         {
+            DataScript.ThemeIndex = 0;
             Level = 1;
         }
         else
         {
             Debug.LogError("Non existing game mode");
+            Debug.LogWarning("Game mode is Endless");
         }
+        Debug.LogWarning("Level is : " + Level);
     }
 
     public void Start()
@@ -146,9 +151,9 @@ public class GameConst : MonoBehaviour
 
         LastPosOfArray = 0f;
         //level based oyunsa blok sayısı ona göre artsın yoksa düz 15den devam.
-        blockNumber = (gameMode == 0) ? 3 + Level * 3 : 15; // aslında 16 tane oluyor ilk blok da olduğu için
+        blockNumber = (gameMode == 0) ? LevelBlockCountDecider() : 15; // aslında 16 tane oluyor ilk blok da olduğu için
         //blockNumber = 15; // aslında 16 tane oluyor ilk blok da olduğu için
-
+        Debug.LogWarning("BlockNumber is : " + blockNumber);
         blocks = new GameObject[blockNumber + 1];
         //createNewLevel = false;
 
@@ -189,33 +194,38 @@ public class GameConst : MonoBehaviour
     }
 
     //This is used for level based level endings
-    private IEnumerator LevelEndedState(float PlayerSpeedLimit, float PlayerSpeed)
+    private IEnumerator LevelEndedState(float PlayerSpeedLimit)
     {
-		
-
         yield return new WaitForSeconds(.3f);
 
+		///////////////////////////////////////////////////renklerrrr////////////////////////////////////////////////////////////////
+		/*float randFlt = Random.Range (0.01f, 1f);
 
-		///////////////////////////////////////////////////reklerrrr////////////////////////////////////////////////////////////////
-		float randFlt = Random.Range (0.01f, 1f);
 		DataScript.levelModeBlockColor = HueChanger.hueChanger (DataScript.levelModeBlockColor, randFlt);//Random.Range (0f,1f));
-		DataScript.levelModeHexogenColor = HueChanger.hueChanger (DataScript.levelModeHexogenColor, randFlt);//Random.Range (0f,1f));
-		///////////////////////////////////////////////////reklerrrr//////////////////////////////////////////////////////////////
+		DataScript.levelModeHexogenColor = HueChanger.hueChanger (DataScript.levelModeHexogenColor, randFlt);//Random.Range (0f,1f));*/
+		///////////////////////////////////////////////////renklerrrr//////////////////////////////////////////////////////////////
+        /// 
+        /// Safe swicth for when player dies after stepping last block dont increment level and break corountine
+        if(isGameOn != true)
+        {
+            yield break;
+        }
 
         playerLock = true;
         onIdle = true;
         DataScript.pointHolder = points;
         DataScript.isSessionEnded = false;
-
+        DataScript.isPassedAtLeastOneLevel = true;
+        DataScript.ThemeIndex = (Level - 1) % DataScript.Themes.Count;
         PlayerPrefs.SetInt("PlayerLevel", Level);
-        //Debug.LogWarning(PlayerPrefs.GetInt("PlayerLevel"));
-
+		FB.LogAppEvent(AppEventName.AchievedLevel, (float)Level - 1);
         if (PlayerPrefs.GetInt("MaxLevel") < Level)
         {
             PlayerPrefs.SetInt("MaxLevel", Level);
         }
         GameObject coins = GameObject.FindWithTag("Coins");
         GameObject levelHexogans = GameObject.FindWithTag("LevelHollows");
+
         float speedRate = 10f;
         float waitTime = .01f;
 
@@ -226,6 +236,9 @@ public class GameConst : MonoBehaviour
         }
 
         bool changed = false;
+        float tilt = 0;
+        Color ex = levelHexogans.transform.GetChild(0).transform.GetChild(0).GetComponent<Renderer>().material.color;
+       
         while (onIdle)
         {
             if (Player.instance.transform.position.z >= coins.transform.GetChild(coins.transform.childCount - 1).transform.position.z + 50f && !changed)
@@ -233,6 +246,22 @@ public class GameConst : MonoBehaviour
                 changed = true;
                 uIScript.NextLevel();
             }
+            if(tilt < 1)
+            {
+                tilt = Mathf.MoveTowards(tilt, 1f, 0.01f);
+                foreach(Renderer r in levelHexogans.GetComponentsInChildren<Renderer>())
+                {
+                    r.material.color = Color.Lerp(ex, DataScript.Themes[DataScript.ThemeIndex].HexagonColor, tilt);
+                }
+                Edges.ForEach(delegate(GameObject g)
+                {
+                    foreach(Renderer r in g.GetComponentsInChildren<Renderer>())
+                    {
+                        r.material.color = Color.Lerp(ex, DataScript.Themes[DataScript.ThemeIndex].HexagonColor, tilt);
+                    }
+                });
+            }
+
             LevelHollowGetDistance.SetHollow(levelHexogans.transform.GetChild(0).gameObject, LevelHollowGetDistance.GetDistance(levelHexogans.transform) + 10f);
             levelHexogans.transform.GetChild(0).SetAsLastSibling();
             yield return new WaitUntil(() => Player.instance.transform.position.z >= GameObject.FindWithTag("LevelHollows").transform.GetChild(GameObject.FindWithTag("LevelHollows").transform.childCount - 25).transform.position.z);
@@ -315,6 +344,7 @@ public class GameConst : MonoBehaviour
         }
         //LastPosOfArray = blocks[blocks.Length - 1].transform.position.z;
     }
+
     private void HollowSetter(float firstBlockPos)
     {
         for (int i = 0; i < Hollows.Capacity; i++)
@@ -370,17 +400,20 @@ public class GameConst : MonoBehaviour
 
         if (gameMode == 0)
         {
-            StartCoroutine(LevelEndedState(playerMAX, Player.instance.speed.z));
+            Debug.Log("Level Finish Has Started");
+            StartCoroutine(LevelEndedState(playerMAX));
         }
-        else
+        else if(gameMode == 1)
         {
+            Debug.Log("Endless Finish Has Started");
             StartCoroutine(LevelChangeState(playerMAX, Player.instance.speed.z));
         }
     }
 
     private int LevelBlockCountDecider()
     {
-        return 10 * ((Level - 1) / Level);
+        float coefficient = (Level != 1) ? (float)(Level - 1) / 10 : 0;
+        return 10 +(int)(30 * (1 - Mathf.Exp(-(coefficient))));// ((Level) / (Level/2));
     }
 
     private void Update()

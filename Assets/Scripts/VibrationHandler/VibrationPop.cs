@@ -20,7 +20,7 @@ public class VibrationPop
 
     public static void vibrateforDuration(int x)
     {
-        Vibrate(x);
+        //Vibrate(x);
     }
 
 

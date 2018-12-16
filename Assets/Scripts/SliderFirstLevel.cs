@@ -7,7 +7,7 @@ public class SliderFirstLevel : MonoBehaviour {
 
 
 	void Start () {
-		gameObject.GetComponent<Text> ().text = GameConst.Level.ToString ();
+        gameObject.GetComponent<Text> ().text = (GameConst.Level + 1).ToString ();
 	}
 	
 
